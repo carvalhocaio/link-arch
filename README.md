@@ -1,13 +1,26 @@
 # URL Shortener
 
-A fast, lightweight URL shortener API built with Bun and Elysia. It generates short links, tracks click counts, validates target URL reachability, and exposes auto-generated OpenAPI documentation.
+A fast, lightweight URL shortener built with Bun, Elysia, and Next.js. It generates short links, tracks click counts, validates target URL reachability, and exposes auto-generated OpenAPI documentation. Includes a web frontend with dark mode support.
 
 ## Tech Stack
+
+### Backend
 
 - **Runtime:** [Bun](https://bun.sh)
 - **Framework:** [Elysia](https://elysiajs.com)
 - **Database:** PostgreSQL
 - **ORM:** [Drizzle ORM](https://orm.drizzle.team) (with [postgres.js](https://github.com/porsager/postgres) driver)
+
+### Frontend
+
+- **Framework:** [Next.js](https://nextjs.org) 16 (App Router, Turbopack)
+- **UI Components:** [shadcn/ui](https://ui.shadcn.com) v4
+- **Data Fetching:** [TanStack React Query](https://tanstack.com/query) v5
+- **Theming:** [next-themes](https://github.com/pacocoursey/next-themes) (system, light, dark)
+- **Notifications:** [Sonner](https://sonner.emilkowal.dev)
+
+### Tooling
+
 - **Monorepo:** [Turborepo](https://turbo.build)
 - **Linter/Formatter:** [Biome](https://biomejs.dev)
 - **Load Testing:** [k6](https://k6.io)
@@ -61,7 +74,7 @@ bun run db:migrate
 bun run dev
 ```
 
-The API will be available at `http://localhost:3000` (or whichever port you configured).
+The API will be available at `http://localhost:3000` and the web frontend at `http://localhost:3001`.
 
 ## Available Scripts
 
@@ -71,6 +84,7 @@ All scripts are run from the monorepo root with `bun run <script>`.
 |---|---|
 | `dev` | Start all apps in development mode (with hot reload) |
 | `dev:api` | Start only the API app in development mode |
+| `dev:web` | Start only the web frontend in development mode |
 | `build` | Build all apps and packages |
 | `lint` | Run Biome linter across the monorepo |
 | `check` | Run Biome checks across the monorepo |
@@ -81,9 +95,10 @@ All scripts are run from the monorepo root with `bun run <script>`.
 
 ## Project Structure
 
-This is a Turborepo monorepo organized into two directories:
+This is a Turborepo monorepo:
 
 - **`apps/api`** -- The Elysia-based URL shortener API
+- **`apps/web`** -- The Next.js web frontend (shadcn/ui, React Query, next-themes)
 - **`packages/db`** -- Shared database schema, migrations, and type exports (Drizzle ORM)
 - **`packages/biome-config`** -- Shared Biome linter/formatter configuration
 - **`packages/tsconfig`** -- Shared TypeScript configuration
