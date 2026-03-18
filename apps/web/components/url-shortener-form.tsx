@@ -46,9 +46,9 @@ export function UrlShortenerForm({ onSuccess }: UrlShortenerFormProps) {
 				onChange={(e) => setUrl(e.target.value)}
 				disabled={isPending}
 				required
-				className="h-8 flex-1"
+				className="flex-1"
 			/>
-			<Button type="submit" disabled={isPending} size="lg">
+			<Button type="submit" disabled={isPending}>
 				{isPending ? <Loader2 className="animate-spin" /> : <Scissors data-icon="inline-start" />}
 				{isPending ? "Shortening..." : "Shorten"}
 			</Button>
