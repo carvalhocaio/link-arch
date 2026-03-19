@@ -6,6 +6,13 @@ import { useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ShortenResult } from "@/components/shorten-result";
 import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { UrlShortenerForm } from "@/components/url-shortener-form";
 import type { ShortenResponse } from "@/lib/api";
@@ -47,10 +54,12 @@ const stats = [
 ] as const;
 
 export default function Page() {
-	const [results, setResults] = useState<ShortenResponse[]>([]);
+	const [latestShortUrl, setLatestShortUrl] = useState<ShortenResponse | null>(null);
+	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
 	function handleSuccess(data: ShortenResponse) {
-		setResults((prev) => [data, ...prev]);
+		setLatestShortUrl(data);
+		setIsCreateDialogOpen(false);
 	}
 
 	return (
@@ -65,12 +74,28 @@ export default function Page() {
 								<p className="text-sm font-medium">Dashboard</p>
 							</div>
 						</div>
-						<Button size="sm" className="gap-1.5 cursor-pointer">
+						<Button
+							size="sm"
+							className="gap-1.5 cursor-pointer"
+							onClick={() => setIsCreateDialogOpen(true)}
+						>
 							<Sparkles className="size-3.5" />
 							Create New Link
 						</Button>
 					</div>
 				</header>
+
+				<Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>Create New Link</DialogTitle>
+							<DialogDescription>
+								Paste your URL to generate a short link with analytics.
+							</DialogDescription>
+						</DialogHeader>
+						<UrlShortenerForm onSuccess={handleSuccess} />
+					</DialogContent>
+				</Dialog>
 
 				<main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 md:px-6">
 					<section className="grid gap-4 lg:grid-cols-3">
@@ -100,6 +125,11 @@ export default function Page() {
 							</span>
 						</div>
 						<UrlShortenerForm onSuccess={handleSuccess} />
+						{latestShortUrl ? (
+							<div className="mt-4">
+								<ShortenResult data={latestShortUrl} />
+							</div>
+						) : null}
 					</section>
 
 					<section className="grid gap-6 xl:grid-cols-[1fr_300px]">
@@ -158,15 +188,6 @@ export default function Page() {
 							</div>
 						</aside>
 					</section>
-
-					{results.length > 0 && (
-						<section className="space-y-4">
-							<h2 className="text-sm font-medium text-muted-foreground">Latest shortened links</h2>
-							{results.map((result) => (
-								<ShortenResult key={result.key} data={result} />
-							))}
-						</section>
-					)}
 				</main>
 			</SidebarInset>
 		</SidebarProvider>

@@ -1,10 +1,9 @@
 "use client";
 
-import { Check, ClipboardCopy, ExternalLink, Eye, TriangleAlert } from "lucide-react";
+import { Check, ClipboardCopy, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { PeekDialog } from "@/components/peek-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,85 +31,32 @@ function CopyButton({ value, label }: { value: string; label: string }) {
 }
 
 export function ShortenResult({ data }: ShortenResultProps) {
-	const [peekKey, setPeekKey] = useState<string | null>(null);
-
 	return (
-		<>
-			<Card className="surface-floating ghost-border shadow-none">
-				<CardHeader className="pb-2">
-					<CardTitle>URL Shortened</CardTitle>
-					<CardDescription>
-						Your short URL is ready. Save the secret key to manage it later.
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					<div className="space-y-1.5">
-						<span className="text-[0.6875rem] font-medium text-muted-foreground">Short URL</span>
-						<div className="flex items-center gap-2">
-							<Input
-								readOnly
-								value={data.shortUrl}
-								className="ghost-border h-10 flex-1 truncate bg-card font-mono text-xs"
-							/>
-							<CopyButton value={data.shortUrl} label="Short URL" />
-							<Button variant="outline" size="icon" asChild>
-								<a
-									href={data.shortUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									title="Open short URL"
-								>
-									<ExternalLink />
-								</a>
-							</Button>
-						</div>
-					</div>
-
-					<div className="space-y-1.5">
-						<span className="text-[0.6875rem] font-medium text-muted-foreground">Secret Key</span>
-						<div className="flex items-center gap-2">
-							<Input
-								readOnly
-								value={data.secretKey}
-								className="ghost-border h-10 flex-1 truncate bg-card font-mono text-xs"
-							/>
-							<CopyButton value={data.secretKey} label="Secret Key" />
-						</div>
-						<p className="flex items-center gap-1 text-[0.625rem] text-destructive">
-							<TriangleAlert className="size-3 shrink-0" />
-							Save this key! It won&apos;t be shown again.
-						</p>
-					</div>
-
-					<div className="space-y-1.5">
-						<span className="text-[0.6875rem] font-medium text-muted-foreground">Target URL</span>
-						<Input
-							readOnly
-							value={data.targetUrl}
-							className="ghost-border h-10 truncate bg-card font-mono text-xs"
-						/>
-					</div>
-
-					<div className="flex items-center justify-between pt-1">
-						<span className="text-[0.625rem] text-muted-foreground">
-							Created{" "}
-							{new Date(data.createdAt).toLocaleDateString("en-US", {
-								year: "numeric",
-								month: "short",
-								day: "numeric",
-								hour: "2-digit",
-								minute: "2-digit",
-							})}
-						</span>
-						<Button variant="outline" size="sm" onClick={() => setPeekKey(data.key)}>
-							<Eye data-icon="inline-start" />
-							Peek
-						</Button>
-					</div>
-				</CardContent>
-			</Card>
-
-			<PeekDialog urlKey={peekKey} onClose={() => setPeekKey(null)} />
-		</>
+		<Card className="surface-floating ghost-border shadow-none">
+			<CardHeader className="pb-2">
+				<CardTitle>Short URL Ready</CardTitle>
+				<CardDescription>Your link is created. Copy it or open it now.</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<div className="flex items-center gap-2">
+					<Input
+						readOnly
+						value={data.shortUrl}
+						className="ghost-border h-10 flex-1 truncate bg-card font-mono text-xs"
+					/>
+					<CopyButton value={data.shortUrl} label="Short URL" />
+					<Button variant="outline" size="icon" asChild>
+						<a
+							href={data.shortUrl}
+							target="_blank"
+							rel="noopener noreferrer"
+							title="Open short URL"
+						>
+							<ExternalLink />
+						</a>
+					</Button>
+				</div>
+			</CardContent>
+		</Card>
 	);
 }
