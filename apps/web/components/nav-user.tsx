@@ -1,7 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, Monitor, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -12,9 +11,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -44,7 +40,6 @@ export function NavUser({
 }) {
 	const router = useRouter();
 	const { isMobile } = useSidebar();
-	const { setTheme } = useTheme();
 	const signOut = useSignOut();
 
 	function handleSignOut() {
@@ -94,28 +89,6 @@ export function NavUser({
 								</div>
 							</div>
 						</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuSub>
-							<DropdownMenuSubTrigger className="cursor-pointer">
-								<Sun className="size-4 scale-100 rotate-0 dark:hidden" />
-								<Moon className="hidden size-4 scale-100 rotate-0 dark:block" />
-								Theme
-							</DropdownMenuSubTrigger>
-							<DropdownMenuSubContent>
-								<DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("light")}>
-									<Sun />
-									Light
-								</DropdownMenuItem>
-								<DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("dark")}>
-									<Moon />
-									Dark
-								</DropdownMenuItem>
-								<DropdownMenuItem className="cursor-pointer" onClick={() => setTheme("system")}>
-									<Monitor />
-									System
-								</DropdownMenuItem>
-							</DropdownMenuSubContent>
-						</DropdownMenuSub>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
 							<LogOut />

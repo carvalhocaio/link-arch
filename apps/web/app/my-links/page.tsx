@@ -1,56 +1,75 @@
 "use client";
 
-import { Copy, Download, Filter, Link2, Pencil, Trash2, TrendingUp } from "lucide-react";
+import {
+	Bell,
+	CheckCircle2,
+	Copy,
+	Edit3,
+	Info,
+	KeyRound,
+	Link2,
+	MousePointer2,
+	Search,
+	Settings,
+	Star,
+	TrendingUp,
+	UploadCloud,
+	Zap,
+} from "lucide-react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-const links = [
+const quickStats = [
 	{
-		slug: "l.arch/summer-campaign",
-		destination: "https://marketing.enterprise.com/seasonal/2024/summer-sale-global",
-		status: "Active",
-		clicks: "12,482",
-		createdAt: "Oct 12, 2023",
+		title: "Total Clicks",
+		value: "42,892",
+		detail: "+12.5% from last month",
+		tone: "positive",
 	},
 	{
-		slug: "l.arch/product-v3-demo",
-		destination: "https://v3.product.io/demo-session/hq-992-alpha",
-		status: "Active",
-		clicks: "3,102",
-		createdAt: "Oct 09, 2023",
+		title: "Active Links",
+		value: "156",
+		detail: "4 scheduled for expiry",
+		tone: "neutral",
 	},
 	{
-		slug: "l.arch/legacy-docs",
-		destination: "https://docs.v1.internal.dev/archive/2021-final-build",
-		status: "Inactive",
-		clicks: "458",
-		createdAt: "Jan 05, 2022",
-	},
-	{
-		slug: "l.arch/social-bio",
-		destination: "https://bio.link/architect-enterprise-official-hq",
-		status: "Active",
-		clicks: "84,219",
-		createdAt: "Aug 20, 2023",
+		title: "Top Performing",
+		value: "/summer-campaign",
+		detail: "12.4k clicks • Source: Twitter",
+		tone: "featured",
 	},
 ] as const;
 
-const insights = [
+const recentActivity = [
 	{
-		title: "Bulk Management",
-		description: "Update destination URLs or tags for multiple links in a single operation.",
+		slug: "l.architect/docs-24",
+		destination: "google.com/drive/folders/shared-resources",
+		clicks: "1,204",
+		favicon:
+			"https://lh3.googleusercontent.com/aida-public/AB6AXuBMFweqerNzL8Q11gLKzRxHLuHYohgvbVUvkchwaCZmHt3a_MJ0enUlzNDXW7MTgya--U9mO5vjX9-BiO7Xh1szFr6Rid9-otenpLwSFECxOhYXgYym3MFZaJx9DZWtHAN_uEQ3WGteTsA_cRmQJvKHmtsft-6PImICQFFaJ9isPGf05gGzW9mJ9mHGkp2DxjErLW3xY1GDpDEw1R6bvN7BDLWfzGMvNzRJhO4iGGMzrocDwmrhLrt4xeQ8l1gV4l61fGOwPZ08c5ZP",
 	},
 	{
-		title: "Deep-Link Protection",
-		description: "Enable password protection or expiration on sensitive operational links.",
+		slug: "l.architect/team-slack",
+		destination: "join.slack.com/t/architecture-community",
+		clicks: "842",
+		favicon:
+			"https://lh3.googleusercontent.com/aida-public/AB6AXuCk29hOPMF66nAYAOtbGoc4yrjQUBq_5PtQHGFs7EYsYRTakQnyfXdPl5VjnWsOkZRT72cNJALsdySmySO1S1qPOG-3-vY61KSMek51ig0kAHVz-HacOJtouIHKF5znasNmbpSiaiJbQg8kCrcw7Omk5kBn4K6BWZntDIZW7HeKYDLYGrqtqBhsqvV42BL7qfXoOMB_ADhla89n6tje2dutG_0fm5CLBraayb6n0oAybX4M4m9z_0lBEkkMo77q4tDrhYQTZYg8R5G8",
 	},
 	{
-		title: "Automatic Rerouting",
-		description: "Route traffic by device, location, or time for optimized conversion.",
+		slug: "l.architect/v3-design",
+		destination: "figma.com/file/arch-prototypes-v3",
+		clicks: "4,521",
+		favicon:
+			"https://lh3.googleusercontent.com/aida-public/AB6AXuDQaQy9fSfPPXXPZaWi1WuFq8XDsCEGo1HgldFljB5YmwgkZYpDJM8ivrjhZMaAcgpDNKsYyBr6e_YdieDpM4RdXJcWhrDXxcrIVft8Mt5S0HCF3o7XQKbDS8AQ2kuCqu-4DTWZ-akzBOEGbQO9s80QVgQReWfRlHp7A3mIzNimYFMSd0Z_-kzIaWNO3ApJBw5M32ZdPmpwqVBA3oQVCqqF_K0aQlLdN9Iaap5Znvn7oeYdEwhBFHCdsNn6CWl5wKk7qYxvjYQV_67Q",
 	},
+] as const;
+
+const trafficOrigins = [
+	{ label: "Direct Traffic", percentage: 65 },
+	{ label: "Referral", percentage: 20 },
+	{ label: "Social", percentage: 15 },
 ] as const;
 
 export default function MyLinksPage() {
@@ -59,127 +78,241 @@ export default function MyLinksPage() {
 			<AppSidebar />
 			<SidebarInset className="surface-stage">
 				<header className="frosted sticky top-0 z-20 border-b border-border/35">
-					<div className="flex h-16 items-center justify-between gap-3 px-4 md:px-6">
-						<div className="flex items-center gap-3">
+					<div className="flex h-16 items-center justify-between gap-3 px-4 md:px-8">
+						<div className="flex min-w-0 flex-1 items-center gap-3">
 							<SidebarTrigger className="-ml-1" />
-							<Separator orientation="vertical" className="h-4" />
-							<div>
-								<p className="text-sm font-medium">My Links</p>
-								<p className="text-xs text-muted-foreground">Manage digital infrastructure</p>
+							<div className="relative hidden w-full max-w-md items-center md:flex">
+								<Search className="pointer-events-none absolute left-3.5 size-4 text-muted-foreground" />
+								<input
+									type="text"
+									placeholder="Search architecture..."
+									className="h-9 w-full rounded-md border border-transparent bg-muted/80 pr-3 pl-10 text-sm transition-all outline-none focus:border-ring"
+								/>
 							</div>
 						</div>
-						<Button size="sm" className="gap-1.5">
-							<Link2 className="size-3.5" />
-							Create New Link
-						</Button>
+						<div className="flex items-center gap-2">
+							<Button variant="ghost" size="icon-sm" aria-label="Notifications">
+								<Bell className="size-4" />
+							</Button>
+							<Button variant="ghost" size="icon-sm" aria-label="Settings">
+								<Settings className="size-4" />
+							</Button>
+							<img
+								src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW-l4wYzpO87WmVA7G4qJ4xkY-5BItdSdTpss4Rj3JBk5CN25EoPkPGsXH8eqXmnWKwaUJGcTwkRkrKZMCLYIjrJgCrOWDYVtzdPBBduMgyRTqb_aF8aVCqRO8-s0JQGL0erIS_MTbYM7NivbxNMbwPAGlvYQOTnDoOh6wwgJ1VmRNsj15-Ll_kb-JFOOXG8KntcPGW-erm9JeDmjQp0NvLJNL04AAiVnOLb7F_iklUnFWMcwWSb-6xXzJRINFgRjDV0KgXtPpR7Wb"
+								alt="User avatar"
+								className="size-8 rounded-full object-cover ring-1 ring-border"
+							/>
+						</div>
 					</div>
 				</header>
 
-				<main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 md:px-6">
-					<div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-						<div>
-							<h1 className="text-xl font-semibold tracking-tight">My Links</h1>
-							<p className="text-sm text-muted-foreground">
-								Manage and monitor your digital infrastructure links.
-							</p>
-						</div>
-						<div className="flex items-center gap-2">
-							<Button variant="outline" size="sm">
-								<Filter className="size-3.5" />
-								Filter
+				<main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 md:px-8">
+					<section className="relative overflow-hidden rounded-xl border border-border/50 bg-card p-6 shadow-[0_20px_40px_rgb(26_28_28_/_5%)] md:p-8">
+						<div className="pointer-events-none absolute -top-20 -right-12 size-52 rounded-full bg-primary/10 blur-3xl" />
+						<div className="pointer-events-none absolute -bottom-24 -left-16 size-52 rounded-full bg-secondary/70 blur-3xl" />
+						<div className="relative flex flex-col gap-4 md:flex-row md:items-end">
+							<div className="flex-1 space-y-2">
+								<p className="text-[11px] font-bold tracking-[0.18em] text-muted-foreground uppercase">
+									Shortener New Link
+								</p>
+								<div className="flex h-12 items-center rounded-md border border-border/60 bg-muted/70 px-4 transition-colors focus-within:border-primary">
+									<Link2 className="mr-3 size-4 text-muted-foreground" />
+									<input
+										type="url"
+										placeholder="https://very-long-architectural-resource-url.com/structure/sub-page"
+										className="w-full border-none bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+									/>
+								</div>
+							</div>
+							<Button className="h-12 px-7 text-sm font-semibold">
+								Shorten Link
+								<Zap className="size-4" />
 							</Button>
-							<Button variant="outline" size="sm">
-								<Download className="size-3.5" />
-								Export
-							</Button>
 						</div>
-					</div>
+						<div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+							<span className="flex items-center gap-1.5">
+								<CheckCircle2 className="size-3.5 text-primary" />
+								Auto-generated Alias
+							</span>
+							<span className="flex items-center gap-1.5">
+								<CheckCircle2 className="size-3.5 text-primary" />
+								Detailed Analytics
+							</span>
+							<span className="flex items-center gap-1.5">
+								<CheckCircle2 className="size-3.5 text-primary" />
+								Custom Metadata
+							</span>
+						</div>
+					</section>
 
-					<section className="surface-floating ghost-border overflow-hidden rounded-lg">
-						<div className="overflow-x-auto">
-							<table className="w-full min-w-[860px] text-left text-sm">
-								<thead className="bg-muted/80 text-xs text-muted-foreground">
-									<tr>
-										<th className="px-4 py-3 font-medium">Link Identity</th>
-										<th className="px-4 py-3 font-medium">Destination</th>
-										<th className="px-4 py-3 font-medium">Status</th>
-										<th className="px-4 py-3 font-medium">Analytics</th>
-										<th className="px-4 py-3 font-medium">Created</th>
-										<th className="px-4 py-3 font-medium">Actions</th>
-									</tr>
-								</thead>
-								<tbody>
-									{links.map((row) => (
-										<tr key={row.slug} className="bg-card transition-colors hover:bg-muted/70">
-											<td className="px-4 py-4">
-												<p className="font-medium">{row.slug}</p>
-												<p className="text-xs tracking-[0.08em] text-muted-foreground uppercase">
-													short-url
-												</p>
-											</td>
-											<td className="max-w-[320px] px-4 py-4 text-xs text-muted-foreground">
-												<p className="truncate">{row.destination}</p>
-											</td>
-											<td className="px-4 py-4">
-												<span
-													className={`rounded-md px-2 py-1 text-xs ${
-														row.status === "Active"
-															? "bg-primary/12 text-primary"
-															: "bg-muted text-muted-foreground"
-													}`}
-												>
-													{row.status}
-												</span>
-											</td>
-											<td className="px-4 py-4 text-xs">
-												<p className="font-medium">{row.clicks}</p>
-												<p className="text-muted-foreground">Clicks</p>
-											</td>
-											<td className="px-4 py-4 text-xs text-muted-foreground">{row.createdAt}</td>
-											<td className="px-4 py-4">
-												<div className="flex items-center gap-1">
-													<Button variant="ghost" size="icon-sm" title="Copy link">
-														<Copy className="size-3.5" />
-													</Button>
-													<Button variant="ghost" size="icon-sm" title="Edit">
-														<Pencil className="size-3.5" />
-													</Button>
-													<Button variant="ghost" size="icon-sm" title="Analytics">
-														<TrendingUp className="size-3.5" />
-													</Button>
-													<Button variant="ghost" size="icon-sm" title="Delete">
-														<Trash2 className="size-3.5" />
-													</Button>
-												</div>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-						<div className="flex items-center justify-between px-4 py-4 text-xs text-muted-foreground">
-							<span>Showing 1-10 of 24 links</span>
-							<div className="flex items-center gap-2">
-								<Button variant="outline" size="sm">
-									Previous
+					<section className="grid gap-6 md:grid-cols-3">
+						{quickStats.map((stat) => (
+							<article
+								key={stat.title}
+								className="surface-floating ghost-border flex h-40 flex-col justify-between rounded-xl p-6"
+							>
+								<div className="flex items-start justify-between">
+									<p className="text-xs font-semibold tracking-[0.13em] text-muted-foreground uppercase">
+										{stat.title}
+									</p>
+									<div
+										className={`flex size-8 items-center justify-center rounded-full ${
+											stat.tone === "positive"
+												? "bg-primary/10 text-primary"
+												: stat.tone === "featured"
+													? "bg-secondary text-secondary-foreground"
+													: "bg-muted text-muted-foreground"
+										}`}
+									>
+										{stat.tone === "positive" ? (
+											<MousePointer2 className="size-4" />
+										) : stat.tone === "featured" ? (
+											<Star className="size-4" />
+										) : (
+											<Info className="size-4" />
+										)}
+									</div>
+								</div>
+								<div>
+									<p
+										className={`font-semibold tracking-tight ${
+											stat.tone === "featured" ? "text-2xl" : "text-4xl"
+										}`}
+									>
+										{stat.value}
+									</p>
+									<p
+										className={`mt-1 flex items-center gap-1 text-xs font-medium ${
+											stat.tone === "positive" ? "text-primary" : "text-muted-foreground"
+										}`}
+									>
+										{stat.tone === "positive" ? <TrendingUp className="size-3.5" /> : null}
+										{stat.detail}
+									</p>
+								</div>
+							</article>
+						))}
+					</section>
+
+					<section className="grid gap-8 lg:grid-cols-12">
+						<div className="space-y-5 lg:col-span-8">
+							<div className="flex items-center justify-between">
+								<h2 className="text-lg font-semibold tracking-tight">Recent Activity</h2>
+								<Button variant="link" className="h-auto p-0 text-xs font-semibold">
+									View all links
 								</Button>
-								<Button variant="outline" size="sm">
-									Next
+							</div>
+							<div className="space-y-3">
+								{recentActivity.map((activity) => (
+									<article
+										key={activity.slug}
+										className="group flex flex-col gap-4 rounded-xl border border-transparent p-4 transition-all hover:border-border/60 hover:bg-muted/50 sm:flex-row sm:items-center sm:justify-between"
+									>
+										<div className="flex min-w-0 items-center gap-4">
+											<div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border/60 bg-card shadow-sm">
+												<img
+													src={activity.favicon}
+													alt="Favicon"
+													className="size-full object-cover"
+												/>
+											</div>
+											<div className="min-w-0">
+												<p className="truncate text-sm font-semibold">{activity.slug}</p>
+												<p className="truncate text-xs text-muted-foreground">
+													{activity.destination}
+												</p>
+											</div>
+										</div>
+										<div className="flex items-center justify-between gap-5 sm:justify-end sm:gap-8">
+											<div className="text-right">
+												<p className="text-sm font-medium">{activity.clicks}</p>
+												<p className="text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+													Clicks
+												</p>
+											</div>
+											<div className="flex gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
+												<Button variant="ghost" size="icon-sm" aria-label={`Copy ${activity.slug}`}>
+													<Copy className="size-4" />
+												</Button>
+												<Button variant="ghost" size="icon-sm" aria-label={`Edit ${activity.slug}`}>
+													<Edit3 className="size-4" />
+												</Button>
+											</div>
+										</div>
+									</article>
+								))}
+							</div>
+						</div>
+
+						<div className="space-y-6 lg:col-span-4">
+							<article className="surface-section ghost-border rounded-xl p-6">
+								<h3 className="mb-4 text-sm font-bold tracking-[0.14em] text-muted-foreground uppercase">
+									Traffic Origins
+								</h3>
+								<div className="space-y-4">
+									{trafficOrigins.map((source) => (
+										<div key={source.label} className="flex items-center justify-between gap-3">
+											<span className="text-xs">{source.label}</span>
+											<div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+												<div
+													className="h-full rounded-full bg-primary"
+													style={{ width: `${source.percentage}%` }}
+												/>
+											</div>
+											<span className="w-10 text-right font-mono text-xs">
+												{source.percentage}%
+											</span>
+										</div>
+									))}
+								</div>
+							</article>
+
+							<article className="relative h-64 overflow-hidden rounded-xl bg-foreground shadow-xl">
+								<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/35 via-transparent to-transparent" />
+								<img
+									src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqyC_06KZXdDxljAOVofrYHb_LaHNbs71Bh4EZxC07Lm1-amodYSlis0i2x4W46L8l3rSU4R3TuazEYisIPobx3Om24VlACkJgyWsyeUuomYe6gjb_mI_y26ZopbEUDhPIaN_gNPzUpvVlWedVkACZjsz8nxu4T4Shu-E-sk1cG6mmvLeb4K1alkiOuqozpRZUXl17JE3rGMeTHYzpkbUtmQZoaUgAZ2lJNXFVD6COkPBLxNpQcvg6Ani6VOmmy5F1Xp5Q3c1XwYoj"
+									alt="Global map"
+									className="size-full object-cover grayscale invert opacity-20"
+								/>
+								<div className="absolute right-4 bottom-4 left-4 rounded-lg border border-white/15 bg-white/10 p-3 backdrop-blur-md">
+									<p className="mb-1 text-[10px] font-bold tracking-[0.13em] text-white/70 uppercase">
+										Live Global Activity
+									</p>
+									<div className="flex items-center gap-2 text-white">
+										<span className="size-2 rounded-full bg-primary animate-pulse" />
+										<p className="text-xs font-medium">New click from London, UK</p>
+									</div>
+								</div>
+							</article>
+
+							<div className="space-y-3">
+								<Button
+									variant="outline"
+									className="h-11 w-full justify-between rounded-md bg-card px-4 text-xs font-semibold"
+								>
+									Bulk Upload Links
+									<UploadCloud className="size-4 text-muted-foreground" />
+								</Button>
+								<Button
+									variant="outline"
+									className="h-11 w-full justify-between rounded-md bg-card px-4 text-xs font-semibold"
+								>
+									Generate API Key
+									<KeyRound className="size-4 text-muted-foreground" />
 								</Button>
 							</div>
 						</div>
 					</section>
-
-					<section className="grid gap-3 lg:grid-cols-3">
-						{insights.map((insight) => (
-							<article key={insight.title} className="surface-floating ghost-border rounded-lg p-5">
-								<h2 className="text-sm font-medium">{insight.title}</h2>
-								<p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-									{insight.description}
-								</p>
-							</article>
-						))}
-					</section>
+					<div className="md:hidden">
+						<div className="relative w-full">
+							<Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
+							<input
+								type="text"
+								placeholder="Search architecture..."
+								className="h-10 w-full rounded-md border border-transparent bg-muted/80 pr-3 pl-10 text-sm outline-none focus:border-ring"
+							/>
+						</div>
+					</div>
 				</main>
 			</SidebarInset>
 		</SidebarProvider>

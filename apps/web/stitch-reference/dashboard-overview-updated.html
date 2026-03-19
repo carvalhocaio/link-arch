@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LinkArchitect Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Lucide Icons CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#1b1b1e",
+              "tertiary": "#5e5e5e",
+              "on-surface": "#1a1c1c",
+              "tertiary-fixed": "#e2e2e2",
+              "surface-container-low": "#f3f3f3",
+              "primary-container": "#52a32b",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#656467",
+              "outline": "#707a68",
+              "primary-fixed": "#a1f876",
+              "on-secondary-fixed-variant": "#47464a",
+              "on-tertiary-fixed-variant": "#474747",
+              "on-background": "#1a1c1c",
+              "inverse-primary": "#86db5d",
+              "on-tertiary-container": "#2a2a2a",
+              "tertiary-container": "#919191",
+              "on-tertiary-fixed": "#1b1b1b",
+              "on-tertiary": "#ffffff",
+              "on-primary-container": "#0e3100",
+              "surface-variant": "#e2e2e2",
+              "surface-bright": "#f9f9f9",
+              "background": "#f9f9f9",
+              "on-error": "#ffffff",
+              "surface": "#f9f9f9",
+              "secondary-fixed-dim": "#c8c6c9",
+              "secondary-container": "#e4e1e5",
+              "on-primary-fixed-variant": "#1c5200",
+              "primary": "#276c00",
+              "inverse-on-surface": "#f1f1f1",
+              "secondary-fixed": "#e4e1e5",
+              "primary-fixed-dim": "#86db5d",
+              "on-surface-variant": "#404a3a",
+              "surface-dim": "#dadada",
+              "on-primary-fixed": "#072100",
+              "surface-container-lowest": "#ffffff",
+              "on-error-container": "#93000a",
+              "secondary": "#5f5e61",
+              "surface-container": "#eeeeee",
+              "on-primary": "#ffffff",
+              "surface-tint": "#276c00",
+              "surface-container-high": "#e8e8e8",
+              "outline-variant": "#c0cab5",
+              "inverse-surface": "#2f3131",
+              "surface-container-highest": "#e2e2e2",
+              "error": "#ba1a1a",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#c6c6c6"
+            },
+            fontFamily: {
+              "headline": ["Inter", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Inter', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- SideNavBar (Updated as per COMPONENTS_5) -->
+<aside class="flex flex-col fixed left-0 top-0 h-full py-6 px-4 h-screen w-64 border-r border-zinc-200/50 dark:border-zinc-800/50 bg-slate-50 dark:bg-zinc-950 z-50">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary">
+<i class="w-4 h-4" data-lucide="link"></i>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-semibold tracking-tighter text-zinc-900 dark:text-zinc-50">LinkArch</span>
+<span class="text-[10px] uppercase tracking-widest text-zinc-400 font-bold -mt-1">Infrastructure</span>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 shadow-sm ring-1 ring-zinc-200/50 dark:ring-zinc-800/50 rounded-md font-sans text-sm font-medium tracking-tight transition-all duration-200" href="#">
+<i class="w-4 h-4 text-green-700 dark:text-green-500" data-lucide="layout-dashboard"></i>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 font-sans text-sm font-medium tracking-tight hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors duration-200" href="#">
+<i class="w-4 h-4" data-lucide="link"></i>
+                My Links
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 font-sans text-sm font-medium tracking-tight hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors duration-200" href="#">
+<i class="w-4 h-4" data-lucide="bar-chart-3"></i>
+                Analytics
+            </a>
+</nav>
+<div class="mt-auto p-2 bg-zinc-100/50 dark:bg-zinc-900/50 rounded-lg flex items-center gap-3">
+<img alt="User profile" class="w-8 h-8 rounded-full bg-surface-container-high" data-alt="Minimalist avatar placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPyNQg2cxJE5EtdvlMJ-Di0OrFn_JZSmiP_Np7Eg8-c8o2U7SohK3DCVcBhNOXoV7mLi88AtjdHyNHMslsqHDUB7k3q6hcKJdfqapC3ojdhLyPMi2UJYvyF8Xu5shxl4wQGoX3HpwyjXkm_z49uAw80Um-9a9YqHHYmTD_reHeLVpuK9AKEymVn3GZibbxKB_lunOCgF1kvYfxCoRumqgrwNXyyFN9Le8Qfjp05mkOqqONxqMdS8Cgmcbh3lRZDsM5by8D1E4CEmvL"/>
+<div class="flex flex-col">
+<span class="text-xs font-semibold">Professional Plan</span>
+<span class="text-[10px] text-secondary">Active until Dec 2024</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar (Updated as per COMPONENTS_5) -->
+<header class="flex items-center justify-between px-8 h-16 w-full sticky top-0 z-40 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 ml-0">
+<div class="flex items-center flex-1">
+<div class="relative w-full max-w-md group">
+<i class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" data-lucide="search"></i>
+<input class="w-full bg-zinc-100/50 dark:bg-zinc-900/50 border-none rounded-md py-1.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-green-500/20 transition-all font-sans" placeholder="Search architecture..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors">
+<i class="w-4 h-4" data-lucide="notifications"></i>
+</button>
+<button class="p-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors">
+<i class="w-4 h-4" data-lucide="settings"></i>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest overflow-hidden ring-1 ring-zinc-200 dark:ring-zinc-800">
+<img alt="User Avatar" data-alt="User profile picture placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCW-l4wYzpO87WmVA7G4qJ4xkY-5BItdSdTpss4Rj3JBk5CN25EoPkPGsXH8eqXmnWKwaUJGcTwkRkrKZMCLYIjrJgCrOWDYVtzdPBBduMgyRTqb_aF8aVCqRO8-s0JQGL0erIS_MTbYM7NivbxNMbwPAGlvYQOTnDoOh6wwgJ1VmRNsj15-Ll_kb-JFOOXG8KntcPGW-erm9JeDmjQp0NvLJNL04AAiVnOLb7F_iklUnFWMcwWSb-6xXzJRINFgRjDV0KgXtPpR7Wb"/>
+</div>
+</div>
+</header>
+<section class="p-8 max-w-7xl mx-auto space-y-12">
+<!-- Hero Create Section -->
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/10 to-primary-container/10 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+<div class="relative bg-surface-container-lowest border border-outline-variant/15 p-8 rounded-xl shadow-[0_20px_40px_rgba(26,28,28,0.04)]">
+<div class="flex flex-col md:flex-row gap-4 items-end">
+<div class="flex-1 space-y-2">
+<label class="text-[10px] uppercase tracking-widest font-bold text-secondary-fixed-dim">Shorten New Link</label>
+<div class="flex items-center bg-surface-container-low rounded-md px-4 py-3 border border-outline-variant/15 focus-within:border-primary transition-colors">
+<i class="w-4 h-4 text-zinc-400 mr-3" data-lucide="link"></i>
+<input class="bg-transparent border-none p-0 w-full text-on-surface focus:ring-0 placeholder:text-zinc-400" placeholder="https://very-long-architectural-resource-url.com/structure/sub-page" type="text"/>
+</div>
+</div>
+<button class="bg-primary text-on-primary px-8 py-3.5 rounded-md font-semibold text-sm hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+                            Shorten Link
+                            <i class="w-4 h-4" data-lucide="zap"></i>
+</button>
+</div>
+<div class="mt-4 flex gap-4 text-[10px] text-secondary font-medium uppercase tracking-tighter">
+<span class="flex items-center gap-1"><i class="w-3 h-3" data-lucide="check-circle-2"></i> Auto-generated Alias</span>
+<span class="flex items-center gap-1"><i class="w-3 h-3" data-lucide="check-circle-2"></i> Detailed Analytics</span>
+<span class="flex items-center gap-1"><i class="w-3 h-3" data-lucide="check-circle-2"></i> Custom Metadata</span>
+</div>
+</div>
+</div>
+<!-- Quick Stats Bento -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Total Clicks -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col justify-between h-40">
+<div class="flex justify-between items-start">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Total Clicks</span>
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<i class="w-4 h-4" data-lucide="mouse-pointer-2"></i>
+</div>
+</div>
+<div>
+<div class="text-4xl font-semibold tracking-tighter">42,892</div>
+<div class="text-xs text-primary font-medium mt-1 flex items-center gap-1">
+<i class="w-3.5 h-3.5" data-lucide="trending-up"></i>
+                            +12.5% from last month
+                        </div>
+</div>
+</div>
+<!-- Active Links -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col justify-between h-40">
+<div class="flex justify-between items-start">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Active Links</span>
+<div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600">
+<i class="w-4 h-4" data-lucide="link-2-off"></i>
+</div>
+</div>
+<div>
+<div class="text-4xl font-semibold tracking-tighter">156</div>
+<div class="text-xs text-secondary font-medium mt-1 flex items-center gap-1">
+<i class="w-3.5 h-3.5" data-lucide="info"></i>
+                            4 scheduled for expiry
+                        </div>
+</div>
+</div>
+<!-- Top Performing -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-col justify-between h-40">
+<div class="flex justify-between items-start">
+<span class="text-xs font-semibold text-secondary uppercase tracking-wider">Top Performing</span>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<i class="w-4 h-4" data-lucide="star"></i>
+</div>
+</div>
+<div class="space-y-1">
+<div class="text-lg font-bold truncate">/summer-campaign</div>
+<div class="flex items-center justify-between">
+<span class="text-[10px] text-secondary font-mono">12.4k clicks</span>
+<span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded">Source: Twitter</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Split: Recent Activity & Live Map -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Recent Activity List (Editorial Row Style) -->
+<div class="lg:col-span-8 space-y-6">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-lg font-semibold tracking-tight">Recent Activity</h2>
+<button class="text-xs text-primary font-semibold hover:underline">View all links</button>
+</div>
+<div class="space-y-4">
+<!-- Activity Row 1 -->
+<div class="group flex items-center justify-between p-4 rounded-xl transition-all duration-200 hover:bg-surface-container-low border border-transparent hover:border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-white flex items-center justify-center border border-outline-variant/10 shadow-sm">
+<img alt="Favicon" data-alt="Google company favicon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMFweqerNzL8Q11gLKzRxHLuHYohgvbVUvkchwaCZmHt3a_MJ0enUlzNDXW7MTgya--U9mO5vjX9-BiO7Xh1szFr6Rid9-otenpLwSFECxOhYXgYym3MFZaJx9DZWtHAN_uEQ3WGteTsA_cRmQJvKHmtsft-6PImICQFFaJ9isPGf05gGzW9mJ9mHGkp2DxjErLW3xY1GDpDEw1R6bvN7BDLWfzGMvNzRJhO4iGGMzrocDwmrhLrt4xeQ8l1gV4l61fGOwPZ08c5ZP"/>
+</div>
+<div>
+<div class="text-sm font-semibold text-on-surface">l.architect/docs-24</div>
+<div class="text-[11px] text-zinc-400 truncate max-w-[200px]">google.com/drive/folders/shared-res...</div>
+</div>
+</div>
+<div class="flex items-center gap-12">
+<div class="text-right">
+<div class="text-sm font-mono font-medium">1,204</div>
+<div class="text-[10px] text-zinc-400 uppercase tracking-tighter">Clicks</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-md transition-colors"><i class="w-4 h-4 text-zinc-500" data-lucide="copy"></i></button>
+<button class="p-2 hover:bg-white rounded-md transition-colors"><i class="w-4 h-4 text-zinc-500" data-lucide="edit-3"></i></button>
+</div>
+</div>
+</div>
+<!-- Activity Row 2 -->
+<div class="group flex items-center justify-between p-4 rounded-xl transition-all duration-200 hover:bg-surface-container-low border border-transparent hover:border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-white flex items-center justify-center border border-outline-variant/10 shadow-sm">
+<img alt="Favicon" data-alt="Slack app favicon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCk29hOPMF66nAYAOtbGoc4yrjQUBq_5PtQHGFs7EYsYRTakQnyfXdPl5VjnWsOkZRT72cNJALsdySmySO1S1qPOG-3-vY61KSMek51ig0kAHVz-HacOJtouIHKF5znasNmbpSiaiJbQg8kCrcw7Omk5kBn4K6BWZntDIZW7HeKYDLYGrqtqBhsqvV42BL7qfXoOMB_ADhla89n6tje2dutG_0fm5CLBraayb6n0oAybX4M4m9z_0lBEkkMo77q4tDrhYQTZYg8R5G8"/>
+</div>
+<div>
+<div class="text-sm font-semibold text-on-surface">l.architect/team-slack</div>
+<div class="text-[11px] text-zinc-400 truncate max-w-[200px]">join.slack.com/t/architecture-community</div>
+</div>
+</div>
+<div class="flex items-center gap-12">
+<div class="text-right">
+<div class="text-sm font-mono font-medium">842</div>
+<div class="text-[10px] text-zinc-400 uppercase tracking-tighter">Clicks</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-md transition-colors"><i class="w-4 h-4 text-zinc-500" data-lucide="copy"></i></button>
+<button class="p-2 hover:bg-white rounded-md transition-colors"><i class="w-4 h-4 text-zinc-500" data-lucide="edit-3"></i></button>
+</div>
+</div>
+</div>
+<!-- Activity Row 3 -->
+<div class="group flex items-center justify-between p-4 rounded-xl transition-all duration-200 hover:bg-surface-container-low border border-transparent hover:border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-white flex items-center justify-center border border-outline-variant/10 shadow-sm">
+<img alt="Favicon" data-alt="Figma design tool favicon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQaQy9fSfPPXXPZaWi1WuFq8XDsCEGo1HgldFljB5YmwgkZYpDJM8ivrjhZMaAcgpDNKsYyBr6e_YdieDpM4RdXJcWhrDXxcrIVft8Mt5S0HCF3o7XQKbDS8AQ2kuCqu-4DTWZ-akzBOEGbQO9s80QVgQReWfRlHp7A3mIzNimYFMSd0Z_-kzIaWNO3ApJBw5M32ZdPmpwqVBA3oQVCqqF_K0aQlLdN9Iaap5Znvn7oeYdEwhBFHCdsNn6CWl5wKk7qYxvjYQV_67Q"/>
+</div>
+<div>
+<div class="text-sm font-semibold text-on-surface">l.architect/v3-design</div>
+<div class="text-[11px] text-zinc-400 truncate max-w-[200px]">figma.com/file/arch-prototypes-v3</div>
+</div>
+</div>
+<div class="flex items-center gap-12">
+<div class="text-right">
+<div class="text-sm font-mono font-medium">4,521</div>
+<div class="text-[10px] text-zinc-400 uppercase tracking-tighter">Clicks</div>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-md transition-colors"><i class="w-4 h-4 text-zinc-500" data-lucide="copy"></i></button>
+<button class="p-2 hover:bg-white rounded-md transition-colors"><i class="w-4 h-4 text-zinc-500" data-lucide="edit-3"></i></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Column: Quick Actions & Live Map -->
+<div class="lg:col-span-4 space-y-8">
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/15">
+<h3 class="text-sm font-bold uppercase tracking-widest text-secondary mb-4">Traffic Origins</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-xs">Direct Traffic</span>
+<div class="flex-1 mx-4 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 65%"></div>
+</div>
+<span class="text-xs font-mono">65%</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs">Referral</span>
+<div class="flex-1 mx-4 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 20%"></div>
+</div>
+<span class="text-xs font-mono">20%</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-xs">Social</span>
+<div class="flex-1 mx-4 h-1.5 bg-zinc-200 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 15%"></div>
+</div>
+<span class="text-xs font-mono">15%</span>
+</div>
+</div>
+</div>
+<div class="relative bg-on-surface rounded-xl overflow-hidden h-64 shadow-xl">
+<div class="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<img alt="Geographic map" class="w-full h-full object-cover grayscale invert opacity-20" data-alt="Stylized global map with activity dots" data-location="Global" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqyC_06KZXdDxljAOVofrYHb_LaHNbs71Bh4EZxC07Lm1-amodYSlis0i2x4W46L8l3rSU4R3TuazEYisIPobx3Om24VlACkJgyWsyeUuomYe6gjb_mI_y26ZopbEUDhPIaN_gNPzUpvVlWedVkACZjsz8nxu4T4Shu-E-sk1cG6mmvLeb4K1alkiOuqozpRZUXl17JE3rGMeTHYzpkbUtmQZoaUgAZ2lJNXFVD6COkPBLxNpQcvg6Ani6VOmmy5F1Xp5Q3c1XwYoj"/>
+<div class="absolute bottom-4 left-4 right-4 bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/10">
+<div class="text-[10px] text-white/60 uppercase font-bold tracking-widest mb-1">Live Global Activity</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-xs text-white font-medium">New click from London, UK</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<button class="w-full flex items-center justify-between px-4 py-3 bg-white border border-outline-variant/15 rounded-md hover:bg-surface-container-low transition-colors group">
+<span class="text-xs font-semibold">Bulk Upload Links</span>
+<i class="w-4 h-4 text-zinc-400 group-hover:text-on-surface" data-lucide="upload-cloud"></i>
+</button>
+<button class="w-full flex items-center justify-between px-4 py-3 bg-white border border-outline-variant/15 rounded-md hover:bg-surface-container-low transition-colors group">
+<span class="text-xs font-semibold">Generate API Key</span>
+<i class="w-4 h-4 text-zinc-400 group-hover:text-on-surface" data-lucide="key"></i>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+    </script>
+</body></html>
