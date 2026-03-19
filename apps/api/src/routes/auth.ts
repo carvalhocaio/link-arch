@@ -4,30 +4,32 @@ import { auth } from "../lib/auth";
 export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.post(
 		"/sign-up",
-		async ({ body, set }) => {
+		async ({ body }) => {
 			if (body.password !== body.passwordConfirmation) {
-				set.status = 400;
-				return { error: "Passwords do not match" };
+				return new Response(JSON.stringify({ error: "Passwords do not match" }), {
+					status: 400,
+					headers: { "Content-Type": "application/json" },
+				});
 			}
 
 			try {
-				const result = await auth.api.signUpEmail({
+				const response = await auth.api.signUpEmail({
 					body: {
 						name: body.name,
 						email: body.email,
 						password: body.password,
 					},
+					asResponse: true,
 				});
 
-				return {
-					user: result.user,
-					session: result.session,
-				};
+				return response;
 			} catch (error) {
 				const message = error instanceof Error ? error.message : "Sign up failed";
 
-				set.status = 400;
-				return { error: message };
+				return new Response(JSON.stringify({ error: message }), {
+					status: 400,
+					headers: { "Content-Type": "application/json" },
+				});
 			}
 		},
 		{
@@ -45,24 +47,24 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	)
 	.post(
 		"/sign-in",
-		async ({ body, set }) => {
+		async ({ body }) => {
 			try {
-				const result = await auth.api.signInEmail({
+				const response = await auth.api.signInEmail({
 					body: {
 						email: body.email,
 						password: body.password,
 					},
+					asResponse: true,
 				});
 
-				return {
-					user: result.user,
-					session: result.session,
-				};
+				return response;
 			} catch (error) {
 				const message = error instanceof Error ? error.message : "Invalid credentials";
 
-				set.status = 401;
-				return { error: message };
+				return new Response(JSON.stringify({ error: message }), {
+					status: 401,
+					headers: { "Content-Type": "application/json" },
+				});
 			}
 		},
 		{

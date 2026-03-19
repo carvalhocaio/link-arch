@@ -5,6 +5,7 @@ import "./globals.css";
 import { QueryProvider } from "@/components/query-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 const fontSans = Geist({ subsets: ["latin"], variable: "--font-sans" });
@@ -15,8 +16,8 @@ const fontMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "URL Shortener",
-	description: "A fast, lightweight URL shortener. Shorten your links in seconds.",
+	title: "LinkArch",
+	description: "Digital infrastructure URL management and short links.",
 };
 
 export default function RootLayout({
@@ -33,7 +34,7 @@ export default function RootLayout({
 			<body>
 				<ThemeProvider>
 					<QueryProvider>
-						{children}
+						<TooltipProvider>{children}</TooltipProvider>
 						<Toaster position="bottom-right" />
 					</QueryProvider>
 				</ThemeProvider>

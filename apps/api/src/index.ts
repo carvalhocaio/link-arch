@@ -10,7 +10,12 @@ import { redirectRoutes } from "./routes/redirect";
 import { shortenRoutes } from "./routes/shorten";
 
 const app = new Elysia()
-	.use(cors())
+	.use(
+		cors({
+			origin: env.WEB_URL,
+			credentials: true,
+		}),
+	)
 	.use(
 		openapi({
 			documentation: {

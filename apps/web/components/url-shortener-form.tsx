@@ -38,7 +38,7 @@ export function UrlShortenerForm({ onSuccess }: UrlShortenerFormProps) {
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className="flex gap-2">
+		<form onSubmit={handleSubmit} className="flex flex-col gap-2 sm:flex-row">
 			<Input
 				type="url"
 				placeholder="https://example.com/very-long-url..."
@@ -46,9 +46,9 @@ export function UrlShortenerForm({ onSuccess }: UrlShortenerFormProps) {
 				onChange={(e) => setUrl(e.target.value)}
 				disabled={isPending}
 				required
-				className="flex-1"
+				className="ghost-border h-11 flex-1 bg-card px-3"
 			/>
-			<Button type="submit" disabled={isPending}>
+			<Button type="submit" disabled={isPending} className="h-11 px-5 sm:w-auto">
 				{isPending ? <Loader2 className="animate-spin" /> : <Scissors data-icon="inline-start" />}
 				{isPending ? "Shortening..." : "Shorten"}
 			</Button>

@@ -3,6 +3,7 @@ function loadEnv() {
 		DATABASE_URL: process.env.DATABASE_URL,
 		PORT: process.env.PORT ?? "3000",
 		BASE_URL: process.env.BASE_URL ?? "http://localhost:3000",
+		WEB_URL: process.env.WEB_URL ?? "http://localhost:3001",
 		FORWARD_TIMEOUT_MS: process.env.FORWARD_TIMEOUT_MS ?? "5000",
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
 	};
@@ -21,6 +22,7 @@ function loadEnv() {
 		DATABASE_URL: raw.DATABASE_URL,
 		PORT: Number.parseInt(raw.PORT, 10),
 		BASE_URL: raw.BASE_URL,
+		WEB_URL: raw.WEB_URL,
 		FORWARD_TIMEOUT_MS: Number.parseInt(raw.FORWARD_TIMEOUT_MS, 10),
 		BETTER_AUTH_SECRET: raw.BETTER_AUTH_SECRET,
 	};

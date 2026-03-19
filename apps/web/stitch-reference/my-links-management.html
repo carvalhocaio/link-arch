@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/gh/vinay045/fonts-geist@1.3.1/geist.css" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed": "#1b1b1e",
+              "tertiary": "#5e5e5e",
+              "on-surface": "#1a1c1c",
+              "tertiary-fixed": "#e2e2e2",
+              "surface-container-low": "#f3f3f3",
+              "primary-container": "#52a32b",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#656467",
+              "outline": "#707a68",
+              "primary-fixed": "#a1f876",
+              "on-secondary-fixed-variant": "#47464a",
+              "on-tertiary-fixed-variant": "#474747",
+              "on-background": "#1a1c1c",
+              "inverse-primary": "#86db5d",
+              "on-tertiary-container": "#2a2a2a",
+              "tertiary-container": "#919191",
+              "on-tertiary-fixed": "#1b1b1b",
+              "on-tertiary": "#ffffff",
+              "on-primary-container": "#0e3100",
+              "surface-variant": "#e2e2e2",
+              "surface-bright": "#f9f9f9",
+              "background": "#f9f9f9",
+              "on-error": "#ffffff",
+              "surface": "#f9f9f9",
+              "secondary-fixed-dim": "#c8c6c9",
+              "secondary-container": "#e4e1e5",
+              "on-primary-fixed-variant": "#1c5200",
+              "primary": "#276c00",
+              "inverse-on-surface": "#f1f1f1",
+              "secondary-fixed": "#e4e1e5",
+              "primary-fixed-dim": "#86db5d",
+              "on-surface-variant": "#404a3a",
+              "surface-dim": "#dadada",
+              "on-primary-fixed": "#072100",
+              "surface-container-lowest": "#ffffff",
+              "on-error-container": "#93000a",
+              "secondary": "#5f5e61",
+              "surface-container": "#eeeeee",
+              "on-primary": "#ffffff",
+              "surface-tint": "#276c00",
+              "surface-container-high": "#e8e8e8",
+              "outline-variant": "#c0cab5",
+              "inverse-surface": "#2f3131",
+              "surface-container-highest": "#e2e2e2",
+              "error": "#ba1a1a",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#c6c6c6"
+            },
+            fontFamily: {
+              "headline": ["Geist", "Inter", "sans-serif"],
+              "body": ["Geist", "Inter", "sans-serif"],
+              "label": ["Geist Mono", "monospace"]
+            },
+            borderRadius: {"DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-zinc-200/50 dark:border-zinc-800/50 bg-slate-50 dark:bg-zinc-950 flex flex-col py-6 px-4 z-50">
+<div class="mb-8 px-2 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary">
+<i class="w-4 h-4" data-lucide="layout-dashboard"></i>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-semibold tracking-tighter text-zinc-900 dark:text-zinc-50">LinkArch</span>
+<span class="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Infrastructure</span>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors duration-200 font-sans text-sm font-medium tracking-tight rounded-md active:scale-95" href="#">
+<i class="w-4 h-4" data-lucide="layout-dashboard"></i>
+            Dashboard
+        </a>
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-900 dark:text-zinc-50 font-medium bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-200/50 dark:ring-zinc-800/50 rounded-md font-sans text-sm tracking-tight active:scale-95" href="#">
+<i class="w-4 h-4 text-green-700 dark:text-green-500" data-lucide="link"></i>
+            My Links
+        </a>
+<a class="flex items-center gap-3 px-3 py-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 transition-colors duration-200 font-sans text-sm font-medium tracking-tight rounded-md active:scale-95" href="#">
+<i class="w-4 h-4" data-lucide="bar-chart-3"></i>
+            Analytics
+        </a>
+</nav>
+<div class="mt-auto pt-4 border-t border-zinc-200/50 dark:border-zinc-800/50">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-2.5 rounded-md font-semibold text-sm transition-all active:scale-95">
+<i class="w-4 h-4" data-lucide="plus"></i>
+            Create New Link
+        </button>
+<div class="mt-4 flex items-center gap-3 px-2">
+<img alt="User profile" class="w-8 h-8 rounded-full border border-zinc-200/50 dark:border-zinc-800/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-SJwKG7pJ9YQs0ujx78Bc8I6_ynmq_31YKYUff1-xqUGTj2SMMzCGW2xrmGRoJ6AWV0JiBsQnzi3BtbqwTNk7j8kk20z1G4oHcNhvURqptqW6PAf87YeoQ4z3_L-azIGHLeUnqN1E2CfYT0OCEC4hCvR0n8UEvcoopjgQLT83cTaiPty2Xm0kEVP0e6_iE5OmPM--x-lGTJTRfTQJ51aGyoSsFHBewXWPbgPiIfWp6vZW4qQd4ObzcxEak_jVCdB3uS4wX7ofCoaR"/>
+<div class="overflow-hidden">
+<p class="text-xs font-semibold truncate text-on-surface">Alex Thompson</p>
+<p class="text-[10px] text-secondary truncate uppercase font-bold tracking-widest">Professional Plan</p>
+</div>
+</div>
+</div>
+</aside>
+<header class="sticky top-0 w-full z-40 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md flex items-center justify-between px-8 h-16 ml-64 max-w-[calc(100%-16rem)] border-b border-zinc-200/50 dark:border-zinc-800/50">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full group">
+<i class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4 group-focus-within:text-green-700 transition-colors" data-lucide="search"></i>
+<input class="w-full bg-zinc-100/50 dark:bg-zinc-900/50 border-none focus:ring-2 focus:ring-green-500/20 rounded-md pl-10 pr-4 py-1.5 text-sm font-sans transition-all" placeholder="Search links, slugs or destinations..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors">
+<i class="w-5 h-5" data-lucide="bell"></i>
+</button>
+<button class="p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors">
+<i class="w-5 h-5" data-lucide="settings"></i>
+</button>
+<div class="h-8 w-[1px] bg-zinc-200/50 dark:border-zinc-800/50 mx-2"></div>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-zinc-200/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDGAF0LTvlgcgf_nOttbjoWbvwA_8HsYhDn-ka8diUuhbrjP7N0_O0dAQZMFI-lr-K29HwzBDmuJQXllmRGE6Hc-fze2-7tKib8Y8XGZr7fbeJpk20uKJsjwS3VX3S_X9WP5BQt3dGamyuCNttdGnhT8CRjj5v_n8zyTCqcyD4PDNYFhU7DQdlwScLBmop3qVX3T3mwQfsGD-TXxrGmt2wuaiZbpfd6EU6bRgY9QsSSQR6AxTc-e-LqjZIqRpPlexvo_74ibQy7Vku"/>
+</div>
+</header>
+<main class="ml-64 p-8 min-h-[calc(100vh-4rem)]">
+<div class="max-w-6xl mx-auto">
+<div class="flex items-baseline justify-between mb-10">
+<div>
+<h1 class="text-3xl font-semibold tracking-tighter text-on-surface mb-1">My Links</h1>
+<p class="text-secondary text-sm">Manage and monitor your digital infrastructure links.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high text-on-surface rounded-md text-sm font-medium hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+                    Filter
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high text-on-surface rounded-md text-sm font-medium hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+                    Export
+                </button>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(26,28,28,0.04)] border border-outline-variant/15">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary font-medium text-xs uppercase tracking-widest border-b border-outline-variant/15">
+<th class="px-6 py-4 font-semibold">Link Identity</th>
+<th class="px-6 py-4 font-semibold">Destination</th>
+<th class="px-6 py-4 font-semibold text-center">Status</th>
+<th class="px-6 py-4 font-semibold text-right">Analytics</th>
+<th class="px-6 py-4 font-semibold text-right">Created</th>
+<th class="px-6 py-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="group hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-on-surface font-semibold text-sm mb-0.5">l.arch/summer-campaign</span>
+<div class="flex items-center gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-1.5 py-0.5 rounded text-[10px] font-mono tracking-tight">SHORT-URL</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col max-w-[200px]">
+<span class="text-secondary text-xs truncate">https://marketing.enterprise.com/seasonal/2024/summer-sale-global</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary uppercase">Active</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex flex-col items-end">
+<span class="text-on-surface font-semibold text-sm">12,482</span>
+<span class="text-[10px] text-secondary">Clicks</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="text-secondary text-xs">Oct 12, 2023</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-primary/5 rounded transition-colors" title="Copy Link">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Analytics">
+<span class="material-symbols-outlined text-lg" data-icon="insights">insights</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/5 rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-on-surface font-semibold text-sm mb-0.5">l.arch/product-v3-demo</span>
+<div class="flex items-center gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-1.5 py-0.5 rounded text-[10px] font-mono tracking-tight">SHORT-URL</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col max-w-[200px]">
+<span class="text-secondary text-xs truncate">https://v3.product.io/demo-session/hq-992-alpha</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary uppercase">Active</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex flex-col items-end">
+<span class="text-on-surface font-semibold text-sm">3,102</span>
+<span class="text-[10px] text-secondary">Clicks</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="text-secondary text-xs">Oct 09, 2023</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-primary/5 rounded transition-colors" title="Copy Link">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Analytics">
+<span class="material-symbols-outlined text-lg" data-icon="insights">insights</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/5 rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low/50 transition-colors opacity-60">
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-on-surface font-semibold text-sm mb-0.5 line-through">l.arch/legacy-docs</span>
+<div class="flex items-center gap-2">
+<span class="bg-surface-container-highest text-on-surface-variant px-1.5 py-0.5 rounded text-[10px] font-mono tracking-tight">SHORT-URL</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col max-w-[200px]">
+<span class="text-secondary text-xs truncate">https://docs.v1.internal.dev/archive/2021-final-build</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-tertiary-fixed text-tertiary uppercase">Inactive</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex flex-col items-end">
+<span class="text-on-surface font-semibold text-sm">458</span>
+<span class="text-[10px] text-secondary">Clicks</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="text-secondary text-xs">Jan 05, 2022</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-primary/5 rounded transition-colors" title="Copy Link">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Analytics">
+<span class="material-symbols-outlined text-lg" data-icon="insights">insights</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/5 rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-surface-container-low/50 transition-colors">
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="text-on-surface font-semibold text-sm mb-0.5">l.arch/social-bio</span>
+<div class="flex items-center gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-1.5 py-0.5 rounded text-[10px] font-mono tracking-tight">SHORT-URL</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col max-w-[200px]">
+<span class="text-secondary text-xs truncate">https://bio.link/architect-enterprise-official-hq</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary uppercase">Active</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex flex-col items-end">
+<span class="text-on-surface font-semibold text-sm">84,219</span>
+<span class="text-[10px] text-secondary">Clicks</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<span class="text-secondary text-xs">Aug 20, 2023</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 text-secondary hover:text-primary hover:bg-primary/5 rounded transition-colors" title="Copy Link">
+<span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-high rounded transition-colors" title="Analytics">
+<span class="material-symbols-outlined text-lg" data-icon="insights">insights</span>
+</button>
+<button class="p-1.5 text-secondary hover:text-error hover:bg-error/5 rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 bg-surface-container-low flex items-center justify-between border-t border-outline-variant/15">
+<p class="text-xs text-secondary">Showing <span class="text-on-surface font-medium">1-10</span> of <span class="text-on-surface font-medium">24</span> links</p>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant/15 rounded text-xs font-medium text-on-surface hover:bg-surface-container-high disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+<button class="px-3 py-1.5 bg-surface-container-lowest border border-outline-variant/15 rounded text-xs font-medium text-on-surface hover:bg-surface-container-high">Next</button>
+</div>
+</div>
+</div>
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
+<span class="text-[10px] uppercase font-bold text-secondary tracking-widest">Efficiency</span>
+</div>
+<h3 class="text-lg font-semibold mb-2">Bulk Management</h3>
+<p class="text-secondary text-sm leading-relaxed">Update destination URLs or tags for multiple links simultaneously using our advanced architecture tools.</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="shield">shield</span>
+<span class="text-[10px] uppercase font-bold text-secondary tracking-widest">Security</span>
+</div>
+<h3 class="text-lg font-semibold mb-2">Deep-Link Protection</h3>
+<p class="text-secondary text-sm leading-relaxed">Enable password protection or expiration dates on sensitive corporate infrastructure links.</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5">
+<div class="flex items-center justify-between mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="auto_graph">auto_graph</span>
+<span class="text-[10px] uppercase font-bold text-secondary tracking-widest">Intelligence</span>
+</div>
+<h3 class="text-lg font-semibold mb-2">Automatic Rerouting</h3>
+<p class="text-secondary text-sm leading-relaxed">Dynamically route traffic based on user device, location, or time of day for optimized conversion.</p>
+</div>
+</div>
+</div>
+</main>
+<script>
+    lucide.createIcons();
+</script>
+</body></html>

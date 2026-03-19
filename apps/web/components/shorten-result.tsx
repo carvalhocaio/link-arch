@@ -36,18 +36,22 @@ export function ShortenResult({ data }: ShortenResultProps) {
 
 	return (
 		<>
-			<Card>
-				<CardHeader>
+			<Card className="surface-floating ghost-border shadow-none">
+				<CardHeader className="pb-2">
 					<CardTitle>URL Shortened</CardTitle>
 					<CardDescription>
 						Your short URL is ready. Save the secret key to manage it later.
 					</CardDescription>
 				</CardHeader>
-				<CardContent className="space-y-3">
-					<div className="space-y-1">
+				<CardContent className="space-y-4">
+					<div className="space-y-1.5">
 						<span className="text-[0.6875rem] font-medium text-muted-foreground">Short URL</span>
 						<div className="flex items-center gap-2">
-							<Input readOnly value={data.shortUrl} className="flex-1 truncate font-mono text-xs" />
+							<Input
+								readOnly
+								value={data.shortUrl}
+								className="ghost-border h-10 flex-1 truncate bg-card font-mono text-xs"
+							/>
 							<CopyButton value={data.shortUrl} label="Short URL" />
 							<Button variant="outline" size="icon" asChild>
 								<a
@@ -62,10 +66,14 @@ export function ShortenResult({ data }: ShortenResultProps) {
 						</div>
 					</div>
 
-					<div className="space-y-1">
+					<div className="space-y-1.5">
 						<span className="text-[0.6875rem] font-medium text-muted-foreground">Secret Key</span>
 						<div className="flex items-center gap-2">
-							<Input readOnly value={data.secretKey} className="flex-1 truncate font-mono text-xs" />
+							<Input
+								readOnly
+								value={data.secretKey}
+								className="ghost-border h-10 flex-1 truncate bg-card font-mono text-xs"
+							/>
 							<CopyButton value={data.secretKey} label="Secret Key" />
 						</div>
 						<p className="flex items-center gap-1 text-[0.625rem] text-destructive">
@@ -74,9 +82,13 @@ export function ShortenResult({ data }: ShortenResultProps) {
 						</p>
 					</div>
 
-					<div className="space-y-1">
+					<div className="space-y-1.5">
 						<span className="text-[0.6875rem] font-medium text-muted-foreground">Target URL</span>
-						<Input readOnly value={data.targetUrl} className="truncate font-mono text-xs" />
+						<Input
+							readOnly
+							value={data.targetUrl}
+							className="ghost-border h-10 truncate bg-card font-mono text-xs"
+						/>
 					</div>
 
 					<div className="flex items-center justify-between pt-1">
