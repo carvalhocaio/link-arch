@@ -19,6 +19,15 @@ export interface PeekResponse {
 	createdAt: string;
 }
 
+export interface AdminUrl {
+	id: number;
+	key: string;
+	targetUrl: string;
+	clicks: number;
+	isActive: boolean;
+	createdAt: string;
+}
+
 export async function shortenUrl(url: string): Promise<ShortenResponse> {
 	const response = await fetch(`${API_URL}/api/shorten`, {
 		method: "POST",
@@ -43,6 +52,18 @@ export async function peekUrl(key: string): Promise<PeekResponse> {
 	if (!response.ok) {
 		const error: ShortenErrorResponse = await response.json();
 		throw new Error(error.error ?? "Failed to peek URL");
+	}
+
+	return response.json();
+}
+
+export async function getMyUrls(): Promise<AdminUrl[]> {
+	const response = await fetch(`${API_URL}/api/admin/urls`, {
+		credentials: "include",
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to load user URLs");
 	}
 
 	return response.json();

@@ -19,7 +19,7 @@ import {
 	Zap,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { AppSidebar } from "@/components/app-sidebar";
@@ -33,29 +33,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { useMyUrls } from "@/hooks/use-my-urls";
 import { useShortenUrl } from "@/hooks/use-shorten-url";
 import type { ShortenResponse } from "@/lib/api";
-
-const quickStats = [
-	{
-		title: "Total Clicks",
-		value: "42,892",
-		detail: "+12.5% from last month",
-		tone: "positive",
-	},
-	{
-		title: "Active Links",
-		value: "156",
-		detail: "4 scheduled for expiry",
-		tone: "neutral",
-	},
-	{
-		title: "Top Performing",
-		value: "/summer-campaign",
-		detail: "12.4k clicks • Source: Twitter",
-		tone: "featured",
-	},
-] as const;
+import { buildQuickStats } from "@/lib/dashboard-metrics";
 
 const recentActivity = [
 	{
@@ -89,10 +70,12 @@ const trafficOrigins = [
 
 export default function Page() {
 	const { resolvedTheme, setTheme } = useTheme();
+	const { data: myUrls } = useMyUrls();
 	const [url, setUrl] = useState("");
 	const [createdLink, setCreatedLink] = useState<ShortenResponse | null>(null);
 	const [copied, setCopied] = useState(false);
 	const { mutate: shortenLink, isPending: isShortening } = useShortenUrl();
+	const quickStats = useMemo(() => buildQuickStats(myUrls ?? []), [myUrls]);
 
 	const normalizedUrl = url.trim();
 	const isUrlValid = isValidUrl(normalizedUrl);

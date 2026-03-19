@@ -16,31 +16,13 @@ import {
 	UploadCloud,
 	Zap,
 } from "lucide-react";
+import { useMemo } from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-
-const quickStats = [
-	{
-		title: "Total Clicks",
-		value: "42,892",
-		detail: "+12.5% from last month",
-		tone: "positive",
-	},
-	{
-		title: "Active Links",
-		value: "156",
-		detail: "4 scheduled for expiry",
-		tone: "neutral",
-	},
-	{
-		title: "Top Performing",
-		value: "/summer-campaign",
-		detail: "12.4k clicks • Source: Twitter",
-		tone: "featured",
-	},
-] as const;
+import { useMyUrls } from "@/hooks/use-my-urls";
+import { buildQuickStats } from "@/lib/dashboard-metrics";
 
 const recentActivity = [
 	{
@@ -73,6 +55,9 @@ const trafficOrigins = [
 ] as const;
 
 export default function MyLinksPage() {
+	const { data: myUrls } = useMyUrls();
+	const quickStats = useMemo(() => buildQuickStats(myUrls ?? []), [myUrls]);
+
 	return (
 		<SidebarProvider>
 			<AppSidebar />
