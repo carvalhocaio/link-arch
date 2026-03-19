@@ -1,5 +1,8 @@
+import { user } from "@link-arch/db/schema";
+import { eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
 import { auth } from "../lib/auth";
+import { db } from "../lib/db";
 
 export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.post(
@@ -48,6 +51,19 @@ export const authRoutes = new Elysia({ prefix: "/api/auth" })
 	.post(
 		"/sign-in",
 		async ({ body }) => {
+			const existingUser = await db
+				.select({ id: user.id })
+				.from(user)
+				.where(eq(user.email, body.email))
+				.limit(1);
+
+			if (!existingUser.length) {
+				return new Response(JSON.stringify({ error: "User does not exist" }), {
+					status: 404,
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
 			try {
 				const response = await auth.api.signInEmail({
 					body: {
