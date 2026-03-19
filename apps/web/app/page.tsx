@@ -6,7 +6,6 @@ import { useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ShortenResult } from "@/components/shorten-result";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { UrlShortenerForm } from "@/components/url-shortener-form";
 import type { ShortenResponse } from "@/lib/api";
@@ -62,13 +61,11 @@ export default function Page() {
 					<div className="flex h-16 items-center justify-between gap-3 px-4 md:px-6">
 						<div className="flex items-center gap-3">
 							<SidebarTrigger className="-ml-1" />
-							<Separator orientation="vertical" className="h-4" />
 							<div>
 								<p className="text-sm font-medium">Dashboard</p>
-								<p className="text-xs text-muted-foreground">Operational Overview</p>
 							</div>
 						</div>
-						<Button size="sm" className="gap-1.5">
+						<Button size="sm" className="gap-1.5 cursor-pointer">
 							<Sparkles className="size-3.5" />
 							Create New Link
 						</Button>
