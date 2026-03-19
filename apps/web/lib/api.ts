@@ -28,6 +28,11 @@ export interface AdminUrl {
 	createdAt: string;
 }
 
+export interface UpdateMyUrlPayload {
+	id: number;
+	url: string;
+}
+
 export async function shortenUrl(url: string): Promise<ShortenResponse> {
 	const response = await fetch(`${API_URL}/api/shorten`, {
 		method: "POST",
@@ -64,6 +69,22 @@ export async function getMyUrls(): Promise<AdminUrl[]> {
 
 	if (!response.ok) {
 		throw new Error("Failed to load user URLs");
+	}
+
+	return response.json();
+}
+
+export async function updateMyUrl(payload: UpdateMyUrlPayload): Promise<AdminUrl> {
+	const response = await fetch(`${API_URL}/api/admin/urls/${payload.id}`, {
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
+		credentials: "include",
+		body: JSON.stringify({ url: payload.url }),
+	});
+
+	if (!response.ok) {
+		const error: ShortenErrorResponse = await response.json();
+		throw new Error(error.error ?? "Failed to update URL");
 	}
 
 	return response.json();

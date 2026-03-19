@@ -69,3 +69,13 @@ export async function deactivateUrlByIdAndUserId(id: number, userId: string) {
 		.returning();
 	return updated;
 }
+
+export async function updateUrlTargetByIdAndUserId(id: number, userId: string, targetUrl: string) {
+	const [updated] = await db
+		.update(urls)
+		.set({ targetUrl, updatedAt: new Date() })
+		.where(and(eq(urls.id, id), eq(urls.userId, userId)))
+		.returning();
+
+	return updated;
+}

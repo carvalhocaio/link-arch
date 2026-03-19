@@ -8,6 +8,7 @@ import {
 	Info,
 	KeyRound,
 	Link2,
+	Loader2,
 	MousePointer2,
 	Search,
 	Settings,
@@ -16,37 +17,25 @@ import {
 	UploadCloud,
 	Zap,
 } from "lucide-react";
-import { useMemo } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useMyUrls } from "@/hooks/use-my-urls";
+import { useUpdateMyUrl } from "@/hooks/use-update-my-url";
+import { type ActivityItem, toActivityItems, toShortUrl } from "@/lib/activity";
 import { buildQuickStats } from "@/lib/dashboard-metrics";
-
-const recentActivity = [
-	{
-		slug: "l.architect/docs-24",
-		destination: "google.com/drive/folders/shared-resources",
-		clicks: "1,204",
-		favicon:
-			"https://lh3.googleusercontent.com/aida-public/AB6AXuBMFweqerNzL8Q11gLKzRxHLuHYohgvbVUvkchwaCZmHt3a_MJ0enUlzNDXW7MTgya--U9mO5vjX9-BiO7Xh1szFr6Rid9-otenpLwSFECxOhYXgYym3MFZaJx9DZWtHAN_uEQ3WGteTsA_cRmQJvKHmtsft-6PImICQFFaJ9isPGf05gGzW9mJ9mHGkp2DxjErLW3xY1GDpDEw1R6bvN7BDLWfzGMvNzRJhO4iGGMzrocDwmrhLrt4xeQ8l1gV4l61fGOwPZ08c5ZP",
-	},
-	{
-		slug: "l.architect/team-slack",
-		destination: "join.slack.com/t/architecture-community",
-		clicks: "842",
-		favicon:
-			"https://lh3.googleusercontent.com/aida-public/AB6AXuCk29hOPMF66nAYAOtbGoc4yrjQUBq_5PtQHGFs7EYsYRTakQnyfXdPl5VjnWsOkZRT72cNJALsdySmySO1S1qPOG-3-vY61KSMek51ig0kAHVz-HacOJtouIHKF5znasNmbpSiaiJbQg8kCrcw7Omk5kBn4K6BWZntDIZW7HeKYDLYGrqtqBhsqvV42BL7qfXoOMB_ADhla89n6tje2dutG_0fm5CLBraayb6n0oAybX4M4m9z_0lBEkkMo77q4tDrhYQTZYg8R5G8",
-	},
-	{
-		slug: "l.architect/v3-design",
-		destination: "figma.com/file/arch-prototypes-v3",
-		clicks: "4,521",
-		favicon:
-			"https://lh3.googleusercontent.com/aida-public/AB6AXuDQaQy9fSfPPXXPZaWi1WuFq8XDsCEGo1HgldFljB5YmwgkZYpDJM8ivrjhZMaAcgpDNKsYyBr6e_YdieDpM4RdXJcWhrDXxcrIVft8Mt5S0HCF3o7XQKbDS8AQ2kuCqu-4DTWZ-akzBOEGbQO9s80QVgQReWfRlHp7A3mIzNimYFMSd0Z_-kzIaWNO3ApJBw5M32ZdPmpwqVBA3oQVCqqF_K0aQlLdN9Iaap5Znvn7oeYdEwhBFHCdsNn6CWl5wKk7qYxvjYQV_67Q",
-	},
-] as const;
 
 const trafficOrigins = [
 	{ label: "Direct Traffic", percentage: 65 },
@@ -55,8 +44,60 @@ const trafficOrigins = [
 ] as const;
 
 export default function MyLinksPage() {
-	const { data: myUrls } = useMyUrls();
+	const { data: myUrls, isLoading: isLoadingMyUrls } = useMyUrls();
+	const { mutate: updateMyUrl, isPending: isUpdatingUrl } = useUpdateMyUrl();
 	const quickStats = useMemo(() => buildQuickStats(myUrls ?? []), [myUrls]);
+	const recentActivity = useMemo(() => toActivityItems(myUrls ?? []), [myUrls]);
+	const [editingActivity, setEditingActivity] = useState<ActivityItem | null>(null);
+	const [editingUrl, setEditingUrl] = useState("");
+
+	async function handleCopyActivityLink(activity: ActivityItem) {
+		try {
+			await navigator.clipboard.writeText(toShortUrl(activity.key));
+			toast.success("Short URL copied to clipboard");
+		} catch {
+			toast.error("Failed to copy short URL");
+		}
+	}
+
+	function handleOpenEditActivity(activity: ActivityItem) {
+		setEditingActivity(activity);
+		setEditingUrl(activity.targetUrl);
+	}
+
+	function handleEditModalChange(open: boolean) {
+		if (!open) {
+			setEditingActivity(null);
+			setEditingUrl("");
+		}
+	}
+
+	function handleSaveEditedUrl() {
+		if (!editingActivity) {
+			return;
+		}
+
+		const normalizedEditUrl = editingUrl.trim();
+
+		if (!isValidUrl(normalizedEditUrl)) {
+			toast.error("Please enter a valid URL");
+			return;
+		}
+
+		updateMyUrl(
+			{ id: editingActivity.id, url: normalizedEditUrl },
+			{
+				onSuccess: () => {
+					toast.success("Link destination updated");
+					setEditingActivity(null);
+					setEditingUrl("");
+				},
+				onError: (error) => {
+					toast.error(error.message);
+				},
+			},
+		);
+	}
 
 	return (
 		<SidebarProvider>
@@ -179,53 +220,106 @@ export default function MyLinksPage() {
 						))}
 					</section>
 
+					<Dialog open={!!editingActivity} onOpenChange={handleEditModalChange}>
+						<DialogContent>
+							<DialogHeader>
+								<DialogTitle>Edit destination URL</DialogTitle>
+								<DialogDescription>Update where this short link redirects.</DialogDescription>
+							</DialogHeader>
+							<div className="space-y-3">
+								<Input
+									type="url"
+									value={editingUrl}
+									onChange={(event) => setEditingUrl(event.target.value)}
+									placeholder="https://example.com/path"
+									disabled={isUpdatingUrl}
+									className="ghost-border h-10 bg-card text-xs"
+								/>
+								<Button
+									onClick={handleSaveEditedUrl}
+									disabled={isUpdatingUrl}
+									className="w-full cursor-pointer"
+								>
+									{isUpdatingUrl ? "Saving..." : "Save changes"}
+									{isUpdatingUrl ? <Loader2 className="size-4 animate-spin" /> : null}
+								</Button>
+							</div>
+						</DialogContent>
+					</Dialog>
+
 					<section className="grid gap-8 lg:grid-cols-12">
 						<div className="space-y-5 lg:col-span-8">
 							<div className="flex items-center justify-between">
 								<h2 className="text-lg font-semibold tracking-tight">Recent Activity</h2>
-								<Button variant="link" className="h-auto p-0 text-xs font-semibold">
-									View all links
+								<Button variant="link" className="h-auto p-0 text-xs font-semibold" asChild>
+									<Link href="/my-links">View all links</Link>
 								</Button>
 							</div>
 							<div className="space-y-3">
-								{recentActivity.map((activity) => (
-									<article
-										key={activity.slug}
-										className="group flex flex-col gap-4 rounded-xl border border-transparent p-4 transition-all hover:border-border/60 hover:bg-muted/50 sm:flex-row sm:items-center sm:justify-between"
-									>
-										<div className="flex min-w-0 items-center gap-4">
-											<div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border/60 bg-card shadow-sm">
-												<img
-													src={activity.favicon}
-													alt="Favicon"
-													className="size-full object-cover"
-												/>
+								{isLoadingMyUrls ? (
+									<p className="rounded-xl border border-border/50 p-4 text-sm text-muted-foreground">
+										Loading links...
+									</p>
+								) : recentActivity.length === 0 ? (
+									<p className="rounded-xl border border-border/50 p-4 text-sm text-muted-foreground">
+										No links yet
+									</p>
+								) : (
+									recentActivity.map((activity) => (
+										<article
+											key={activity.id}
+											className="group flex flex-col gap-4 rounded-xl border border-transparent p-4 transition-all hover:border-border/60 hover:bg-muted/50 sm:flex-row sm:items-center"
+										>
+											<div className="flex min-w-0 flex-1 items-center gap-4">
+												<div className="flex size-5 shrink-0 items-center justify-center overflow-hidden">
+													{activity.favicon ? (
+														<img
+															src={activity.favicon}
+															alt="Favicon"
+															className="size-full object-contain"
+														/>
+													) : (
+														<Link2 className="size-4 text-muted-foreground/80" />
+													)}
+												</div>
+												<div className="min-w-0">
+													<p className="truncate text-sm font-semibold">{activity.slug}</p>
+													<p className="truncate text-xs text-muted-foreground">
+														{activity.destination}
+													</p>
+												</div>
 											</div>
-											<div className="min-w-0">
-												<p className="truncate text-sm font-semibold">{activity.slug}</p>
-												<p className="truncate text-xs text-muted-foreground">
-													{activity.destination}
-												</p>
+											<div className="flex items-center gap-1 sm:gap-2">
+												<div className="w-14 text-right">
+													<p className="text-sm font-medium">{activity.clicks.toLocaleString()}</p>
+													<p className="text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
+														Clicks
+													</p>
+												</div>
+												<div className="flex gap-1">
+													<Button
+														variant="ghost"
+														size="icon-sm"
+														aria-label={`Copy ${activity.slug}`}
+														className="cursor-pointer"
+														onClick={() => handleCopyActivityLink(activity)}
+													>
+														<Copy className="size-4" />
+													</Button>
+													<Button
+														variant="ghost"
+														size="icon-sm"
+														aria-label={`Edit ${activity.slug}`}
+														className="cursor-pointer"
+														onClick={() => handleOpenEditActivity(activity)}
+													>
+														<Edit3 className="size-4" />
+													</Button>
+												</div>
 											</div>
-										</div>
-										<div className="flex items-center justify-between gap-5 sm:justify-end sm:gap-8">
-											<div className="text-right">
-												<p className="text-sm font-medium">{activity.clicks}</p>
-												<p className="text-[10px] tracking-[0.1em] text-muted-foreground uppercase">
-													Clicks
-												</p>
-											</div>
-											<div className="flex gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
-												<Button variant="ghost" size="icon-sm" aria-label={`Copy ${activity.slug}`}>
-													<Copy className="size-4" />
-												</Button>
-												<Button variant="ghost" size="icon-sm" aria-label={`Edit ${activity.slug}`}>
-													<Edit3 className="size-4" />
-												</Button>
-											</div>
-										</div>
-									</article>
-								))}
+										</article>
+									))
+								)}
 							</div>
 						</div>
 
@@ -302,4 +396,17 @@ export default function MyLinksPage() {
 			</SidebarInset>
 		</SidebarProvider>
 	);
+}
+
+function isValidUrl(value: string) {
+	if (!value) {
+		return false;
+	}
+
+	try {
+		const parsedUrl = new URL(value);
+		return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+	} catch {
+		return false;
+	}
 }
