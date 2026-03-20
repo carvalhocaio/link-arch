@@ -45,6 +45,7 @@ import { useUpdateMyUrlStatus } from "@/hooks/use-update-my-url-status";
 import { type ActivityItem, toActivityItems, toShortUrl } from "@/lib/activity";
 import type { ShortenResponse } from "@/lib/api";
 import { copyToClipboard } from "@/lib/clipboard";
+import { formatExpiryInBrowserTimezone, toDateInputValueFromUtc } from "@/lib/expiry";
 import { isValidUrl } from "@/lib/url";
 
 const PAGE_SIZE = 10;
@@ -78,6 +79,7 @@ export default function MyLinksPage() {
 	const [editingActivity, setEditingActivity] = useState<ActivityItem | null>(null);
 	const [editingUrl, setEditingUrl] = useState("");
 	const [editingIsActive, setEditingIsActive] = useState(true);
+	const [editingExpiresOn, setEditingExpiresOn] = useState("");
 
 	const normalizedUrl = url.trim();
 	const isUrlValid = isValidUrl(normalizedUrl);
@@ -228,7 +230,9 @@ export default function MyLinksPage() {
 	function handleOpenEditActivity(activity: ActivityItem) {
 		setEditingActivity(activity);
 		setEditingUrl(activity.targetUrl);
-		setEditingIsActive(myUrlsById.get(activity.id)?.isActive ?? true);
+		const currentUrl = myUrlsById.get(activity.id);
+		setEditingIsActive(currentUrl?.isActive ?? true);
+		setEditingExpiresOn(toDateInputValueFromUtc(currentUrl?.expiresAt));
 	}
 
 	function handleEditModalChange(open: boolean) {
@@ -236,6 +240,7 @@ export default function MyLinksPage() {
 			setEditingActivity(null);
 			setEditingUrl("");
 			setEditingIsActive(true);
+			setEditingExpiresOn("");
 		}
 	}
 
@@ -245,11 +250,14 @@ export default function MyLinksPage() {
 		}
 
 		const normalizedEditUrl = editingUrl.trim();
-		const currentIsActive = myUrlsById.get(editingActivity.id)?.isActive ?? true;
+		const currentUrl = myUrlsById.get(editingActivity.id);
+		const currentIsActive = currentUrl?.isActive ?? true;
+		const currentExpiresOn = toDateInputValueFromUtc(currentUrl?.expiresAt);
 		const statusChanged = currentIsActive !== editingIsActive;
 		const hasUrlChange = normalizedEditUrl !== editingActivity.targetUrl;
+		const hasExpiryChange = currentExpiresOn !== editingExpiresOn;
 
-		if (!statusChanged && !hasUrlChange) {
+		if (!statusChanged && !hasUrlChange && !hasExpiryChange) {
 			toast.message("No changes to save");
 			return;
 		}
@@ -261,7 +269,7 @@ export default function MyLinksPage() {
 
 		if (hasUrlChange) {
 			updateMyUrl(
-				{ id: editingActivity.id, url: normalizedEditUrl },
+				{ id: editingActivity.id, url: normalizedEditUrl, expiresAt: editingExpiresOn || null },
 				{
 					onSuccess: () => {
 						if (statusChanged) {
@@ -273,6 +281,7 @@ export default function MyLinksPage() {
 										setEditingActivity(null);
 										setEditingUrl("");
 										setEditingIsActive(true);
+										setEditingExpiresOn("");
 									},
 									onError: (error) => {
 										toast.error(error.message);
@@ -286,6 +295,46 @@ export default function MyLinksPage() {
 						setEditingActivity(null);
 						setEditingUrl("");
 						setEditingIsActive(true);
+						setEditingExpiresOn("");
+					},
+					onError: (error) => {
+						toast.error(error.message);
+					},
+				},
+			);
+
+			return;
+		}
+
+		if (hasExpiryChange) {
+			updateMyUrl(
+				{ id: editingActivity.id, url: normalizedEditUrl, expiresAt: editingExpiresOn || null },
+				{
+					onSuccess: () => {
+						if (statusChanged) {
+							updateMyUrlStatus(
+								{ id: editingActivity.id, isActive: editingIsActive },
+								{
+									onSuccess: () => {
+										toast.success("Link updated");
+										setEditingActivity(null);
+										setEditingUrl("");
+										setEditingIsActive(true);
+										setEditingExpiresOn("");
+									},
+									onError: (error) => {
+										toast.error(error.message);
+									},
+								},
+							);
+							return;
+						}
+
+						toast.success("Link expiry updated");
+						setEditingActivity(null);
+						setEditingUrl("");
+						setEditingIsActive(true);
+						setEditingExpiresOn("");
 					},
 					onError: (error) => {
 						toast.error(error.message);
@@ -304,6 +353,7 @@ export default function MyLinksPage() {
 					setEditingActivity(null);
 					setEditingUrl("");
 					setEditingIsActive(true);
+					setEditingExpiresOn("");
 				},
 				onError: (error) => {
 					toast.error(error.message);
@@ -336,18 +386,28 @@ export default function MyLinksPage() {
 			const rows = sortedActivities.map((activity) => {
 				const urlMeta = myUrlsById.get(activity.id);
 				const isActive = urlMeta?.isActive ?? true;
+				const expiry = formatExpiryInBrowserTimezone(urlMeta?.expiresAt);
 
 				return {
 					identity: `l.arch${activity.slug}`,
 					destination: activity.destination,
 					status: isActive ? "Active" : "Inactive",
+					expiresAt: expiry ?? "-",
 					clicks: activity.clicks,
 					createdAt: formatCreatedAt(urlMeta?.createdAt),
 					shortUrl: toShortUrl(activity.key),
 				};
 			});
 
-			const headers = ["Identity", "Destination", "Status", "Clicks", "Created At", "Short URL"];
+			const headers = [
+				"Identity",
+				"Destination",
+				"Status",
+				"Available Until (Browser TZ)",
+				"Clicks",
+				"Created At",
+				"Short URL",
+			];
 			const csvLines = [
 				headers.join(","),
 				...rows.map((row) =>
@@ -355,6 +415,7 @@ export default function MyLinksPage() {
 						row.identity,
 						row.destination,
 						row.status,
+						row.expiresAt,
 						String(row.clicks),
 						row.createdAt,
 						row.shortUrl,
@@ -537,7 +598,15 @@ export default function MyLinksPage() {
 												<td className="max-w-[240px] px-6 py-5 text-xs text-muted-foreground">
 													<Tooltip>
 														<TooltipTrigger asChild>
-															<p className="truncate">{activity.destination}</p>
+															<div>
+																<p className="truncate">{activity.destination}</p>
+																{urlMeta?.expiresAt ? (
+																	<p className="mt-1 text-[10px] text-muted-foreground/80">
+																		Available until{" "}
+																		{formatExpiryInBrowserTimezone(urlMeta.expiresAt)}
+																	</p>
+																) : null}
+															</div>
 														</TooltipTrigger>
 														<TooltipContent
 															side="top"
@@ -694,6 +763,8 @@ export default function MyLinksPage() {
 					onUrlChange={setEditingUrl}
 					isActive={editingIsActive}
 					onIsActiveChange={setEditingIsActive}
+					expiresOn={editingExpiresOn}
+					onExpiresOnChange={setEditingExpiresOn}
 					onSave={handleSaveEditedUrl}
 					isPending={isUpdatingUrl || isUpdatingUrlStatus}
 				/>

@@ -16,6 +16,7 @@ export const urls = pgTable(
 		isActive: boolean("is_active").notNull().default(true),
 		isDeleted: boolean("is_deleted").notNull().default(false),
 		clicks: integer("clicks").notNull().default(0),
+		expiresAt: timestamp("expires_at"),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at").defaultNow().notNull(),
 	},

@@ -24,12 +24,14 @@ export interface AdminUrl {
 	targetUrl: string;
 	clicks: number;
 	isActive: boolean;
+	expiresAt: string | null;
 	createdAt: string;
 }
 
 export interface UpdateMyUrlPayload {
 	id: number;
 	url: string;
+	expiresAt: string | null;
 }
 
 export interface UpdateMyUrlStatusPayload {
@@ -87,7 +89,7 @@ export async function updateMyUrl(payload: UpdateMyUrlPayload): Promise<AdminUrl
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		credentials: "include",
-		body: JSON.stringify({ url: payload.url }),
+		body: JSON.stringify({ url: payload.url, expiresAt: payload.expiresAt }),
 	});
 
 	if (!response.ok) {

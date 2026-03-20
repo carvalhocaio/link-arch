@@ -12,6 +12,7 @@ export interface DashboardQuickStat {
 export function buildQuickStats(urls: AdminUrl[], now = new Date()): DashboardQuickStat[] {
 	const totalClicks = urls.reduce((sum, url) => sum + url.clicks, 0);
 	const activeLinks = urls.filter((url) => url.isActive).length;
+	const scheduledForExpiry = urls.filter((url) => Boolean(url.expiresAt)).length;
 
 	const topPerforming = [...urls].sort((a, b) => b.clicks - a.clicks)[0] ?? null;
 
@@ -42,7 +43,7 @@ export function buildQuickStats(urls: AdminUrl[], now = new Date()): DashboardQu
 		{
 			title: "Active Links",
 			value: activeLinks.toLocaleString(),
-			detail: "0 scheduled for expiry",
+			detail: `${scheduledForExpiry.toLocaleString()} scheduled for expiry`,
 			tone: "neutral",
 		},
 		{

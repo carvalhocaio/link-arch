@@ -3,8 +3,8 @@ import { authMiddleware } from "../lib/auth-middleware";
 import {
 	getUrlsByUserId,
 	softDeleteUrlByIdAndUserId,
+	updateUrlByIdAndUserId,
 	updateUrlStatusByIdAndUserId,
-	updateUrlTargetByIdAndUserId,
 } from "../services/url.service";
 import { isUrlReachable } from "../services/validator";
 
@@ -20,6 +20,7 @@ export const adminRoutes = new Elysia({ prefix: "/api/admin" })
 				targetUrl: u.targetUrl,
 				clicks: u.clicks,
 				isActive: u.isActive,
+				expiresAt: u.expiresAt,
 				createdAt: u.createdAt,
 			}));
 		},
@@ -41,7 +42,7 @@ export const adminRoutes = new Elysia({ prefix: "/api/admin" })
 				return { error: "URL is not reachable" };
 			}
 
-			const updated = await updateUrlTargetByIdAndUserId(params.id, user.id, body.url);
+			const updated = await updateUrlByIdAndUserId(params.id, user.id, body.url, body.expiresAt);
 
 			if (!updated) {
 				set.status = 404;
@@ -54,6 +55,7 @@ export const adminRoutes = new Elysia({ prefix: "/api/admin" })
 				targetUrl: updated.targetUrl,
 				clicks: updated.clicks,
 				isActive: updated.isActive,
+				expiresAt: updated.expiresAt,
 				createdAt: updated.createdAt,
 			};
 		},
@@ -64,6 +66,7 @@ export const adminRoutes = new Elysia({ prefix: "/api/admin" })
 			}),
 			body: t.Object({
 				url: t.String({ format: "uri" }),
+				expiresAt: t.Nullable(t.String({ format: "date" })),
 			}),
 			detail: {
 				tags: ["Admin"],
@@ -87,6 +90,7 @@ export const adminRoutes = new Elysia({ prefix: "/api/admin" })
 				targetUrl: updated.targetUrl,
 				clicks: updated.clicks,
 				isActive: updated.isActive,
+				expiresAt: updated.expiresAt,
 				createdAt: updated.createdAt,
 			};
 		},

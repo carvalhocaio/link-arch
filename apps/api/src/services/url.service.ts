@@ -1,5 +1,5 @@
 import { urls } from "@link-arch/db/schema";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, isNotNull, lte, sql } from "drizzle-orm";
 import { db } from "../lib/db";
 import { generateKey } from "./keygen";
 
@@ -12,6 +12,8 @@ export async function createShortUrl(targetUrl: string, userId: string) {
 }
 
 export async function findByKey(key: string) {
+	await deactivateExpiredUrls();
+
 	return db.query.urls.findFirst({
 		where: and(eq(urls.key, key), eq(urls.isDeleted, false)),
 	});
@@ -28,11 +30,27 @@ export async function incrementClicks(id: number) {
 }
 
 export async function getUrlsByUserId(userId: string) {
+	await deactivateExpiredUrls();
+
 	return db
 		.select()
 		.from(urls)
 		.where(and(eq(urls.userId, userId), eq(urls.isDeleted, false)))
 		.orderBy(desc(urls.createdAt));
+}
+
+export async function deactivateExpiredUrls() {
+	await db
+		.update(urls)
+		.set({ isActive: false, updatedAt: new Date() })
+		.where(
+			and(
+				eq(urls.isDeleted, false),
+				eq(urls.isActive, true),
+				isNotNull(urls.expiresAt),
+				lte(urls.expiresAt, new Date()),
+			),
+		);
 }
 
 export async function softDeleteUrlByIdAndUserId(id: number, userId: string) {
@@ -73,12 +91,32 @@ export async function updateUrlStatusByIdAndUserId(id: number, userId: string, i
 	return updated;
 }
 
-export async function updateUrlTargetByIdAndUserId(id: number, userId: string, targetUrl: string) {
+export async function updateUrlByIdAndUserId(
+	id: number,
+	userId: string,
+	targetUrl: string,
+	expiresAt: string | null,
+) {
+	const parsedExpiresAt = parseExpiryDate(expiresAt);
+
 	const [updated] = await db
 		.update(urls)
-		.set({ targetUrl, updatedAt: new Date() })
+		.set({ targetUrl, expiresAt: parsedExpiresAt, updatedAt: new Date() })
 		.where(and(eq(urls.id, id), eq(urls.userId, userId), eq(urls.isDeleted, false)))
 		.returning();
 
 	return updated;
+}
+
+function parseExpiryDate(expiresAt: string | null) {
+	if (expiresAt === null) {
+		return null;
+	}
+
+	const [year, month, day] = expiresAt.split("-").map(Number);
+	if (!year || !month || !day) {
+		return null;
+	}
+
+	return new Date(Date.UTC(year, month - 1, day, 23, 59, 59));
 }

@@ -37,6 +37,7 @@ import { type ActivityItem, toActivityItems, toShortUrl } from "@/lib/activity";
 import type { ShortenResponse } from "@/lib/api";
 import { copyToClipboard } from "@/lib/clipboard";
 import { buildQuickStats } from "@/lib/dashboard-metrics";
+import { formatExpiryInBrowserTimezone, toDateInputValueFromUtc } from "@/lib/expiry";
 import { isValidUrl } from "@/lib/url";
 
 export default function Page() {
@@ -47,6 +48,7 @@ export default function Page() {
 	const [editingActivity, setEditingActivity] = useState<ActivityItem | null>(null);
 	const [editingUrl, setEditingUrl] = useState("");
 	const [editingIsActive, setEditingIsActive] = useState(true);
+	const [editingExpiresOn, setEditingExpiresOn] = useState("");
 	const { mutate: shortenLink, isPending: isShortening } = useShortenUrl();
 	const { mutate: updateMyUrl, isPending: isUpdatingUrl } = useUpdateMyUrl();
 	const { mutate: updateMyUrlStatus, isPending: isUpdatingUrlStatus } = useUpdateMyUrlStatus();
@@ -109,7 +111,9 @@ export default function Page() {
 	function handleOpenEditActivity(activity: ActivityItem) {
 		setEditingActivity(activity);
 		setEditingUrl(activity.targetUrl);
-		setEditingIsActive(myUrlsById.get(activity.id)?.isActive ?? true);
+		const currentUrl = myUrlsById.get(activity.id);
+		setEditingIsActive(currentUrl?.isActive ?? true);
+		setEditingExpiresOn(toDateInputValueFromUtc(currentUrl?.expiresAt));
 	}
 
 	function handleEditModalChange(open: boolean) {
@@ -117,6 +121,7 @@ export default function Page() {
 			setEditingActivity(null);
 			setEditingUrl("");
 			setEditingIsActive(true);
+			setEditingExpiresOn("");
 		}
 	}
 
@@ -126,11 +131,14 @@ export default function Page() {
 		}
 
 		const normalizedEditUrl = editingUrl.trim();
-		const currentIsActive = myUrlsById.get(editingActivity.id)?.isActive ?? true;
+		const currentUrl = myUrlsById.get(editingActivity.id);
+		const currentIsActive = currentUrl?.isActive ?? true;
+		const currentExpiresOn = toDateInputValueFromUtc(currentUrl?.expiresAt);
 		const statusChanged = currentIsActive !== editingIsActive;
 		const hasUrlChange = normalizedEditUrl !== editingActivity.targetUrl;
+		const hasExpiryChange = currentExpiresOn !== editingExpiresOn;
 
-		if (!statusChanged && !hasUrlChange) {
+		if (!statusChanged && !hasUrlChange && !hasExpiryChange) {
 			toast.message("No changes to save");
 			return;
 		}
@@ -142,7 +150,7 @@ export default function Page() {
 
 		if (hasUrlChange) {
 			updateMyUrl(
-				{ id: editingActivity.id, url: normalizedEditUrl },
+				{ id: editingActivity.id, url: normalizedEditUrl, expiresAt: editingExpiresOn || null },
 				{
 					onSuccess: () => {
 						if (statusChanged) {
@@ -154,6 +162,7 @@ export default function Page() {
 										setEditingActivity(null);
 										setEditingUrl("");
 										setEditingIsActive(true);
+										setEditingExpiresOn("");
 									},
 									onError: (error) => {
 										toast.error(error.message);
@@ -167,6 +176,46 @@ export default function Page() {
 						setEditingActivity(null);
 						setEditingUrl("");
 						setEditingIsActive(true);
+						setEditingExpiresOn("");
+					},
+					onError: (error) => {
+						toast.error(error.message);
+					},
+				},
+			);
+
+			return;
+		}
+
+		if (hasExpiryChange) {
+			updateMyUrl(
+				{ id: editingActivity.id, url: normalizedEditUrl, expiresAt: editingExpiresOn || null },
+				{
+					onSuccess: () => {
+						if (statusChanged) {
+							updateMyUrlStatus(
+								{ id: editingActivity.id, isActive: editingIsActive },
+								{
+									onSuccess: () => {
+										toast.success("Link updated");
+										setEditingActivity(null);
+										setEditingUrl("");
+										setEditingIsActive(true);
+										setEditingExpiresOn("");
+									},
+									onError: (error) => {
+										toast.error(error.message);
+									},
+								},
+							);
+							return;
+						}
+
+						toast.success("Link expiry updated");
+						setEditingActivity(null);
+						setEditingUrl("");
+						setEditingIsActive(true);
+						setEditingExpiresOn("");
 					},
 					onError: (error) => {
 						toast.error(error.message);
@@ -185,6 +234,7 @@ export default function Page() {
 					setEditingActivity(null);
 					setEditingUrl("");
 					setEditingIsActive(true);
+					setEditingExpiresOn("");
 				},
 				onError: (error) => {
 					toast.error(error.message);
@@ -290,6 +340,8 @@ export default function Page() {
 					onUrlChange={setEditingUrl}
 					isActive={editingIsActive}
 					onIsActiveChange={setEditingIsActive}
+					expiresOn={editingExpiresOn}
+					onExpiresOnChange={setEditingExpiresOn}
 					onSave={handleSaveEditedUrl}
 					isPending={isUpdatingUrl || isUpdatingUrlStatus}
 				/>
@@ -387,6 +439,12 @@ export default function Page() {
 											<p className="truncate text-xs text-muted-foreground">
 												{activity.destination}
 											</p>
+											{myUrlsById.get(activity.id)?.expiresAt ? (
+												<p className="mt-0.5 text-[11px] text-muted-foreground/80">
+													Available until{" "}
+													{formatExpiryInBrowserTimezone(myUrlsById.get(activity.id)?.expiresAt)}
+												</p>
+											) : null}
 										</div>
 									</div>
 									<div className="flex items-center gap-1 sm:gap-2">
