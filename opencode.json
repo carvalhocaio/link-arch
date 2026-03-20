@@ -10,14 +10,6 @@
       "type": "remote",
       "url": "https://mcp.inkeep.com/better-auth/mcp",
       "enabled": true
-    },
-    "stitch": {
-      "type": "remote",
-      "url": "https://stitch.googleapis.com/mcp",
-      "enabled": true,
-      "headers": {
-        "X-Goog-Api-Key": "AQ.Ab8RN6JieA7as5lN5cuZQGEauqqNze2D8IcSjMK_vZXKrUuRJA"
-      }
     }
   }
 }
