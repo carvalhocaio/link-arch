@@ -21,31 +21,33 @@ export default function PrivacyPage() {
 				<article className="space-y-8">
 					<header className="space-y-2">
 						<h1 className="text-3xl font-bold tracking-tight">Privacy Policy</h1>
-						<p className="text-sm text-muted-foreground">Last updated: March 18, 2026</p>
+						<p className="text-sm text-muted-foreground">Last updated: March 19, 2026</p>
 					</header>
 
 					<section className="space-y-3">
 						<h2 className="text-xl font-semibold">1. Information We Collect</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
-							When you use Link Arch (&quot;the Service&quot;), we may collect the following
-							information:
+							When you use Link Arch (&quot;the Service&quot;), we may collect:
 						</p>
 						<ul className="list-disc space-y-1 pl-6 text-sm text-muted-foreground">
 							<li>
-								<strong>Account information:</strong> Name, email address, and password when you
-								create an account
+								<strong>Account information:</strong> Name, email address, and an encrypted or
+								hashed password used to create and protect your account.
 							</li>
 							<li>
-								<strong>URL data:</strong> The original URLs you submit and the shortened URLs
-								generated
+								<strong>Session and security data:</strong> Session identifiers, IP address, and
+								user-agent details associated with authentication and account security.
 							</li>
 							<li>
-								<strong>Usage data:</strong> Click counts, timestamps, and basic analytics related
-								to your shortened URLs
+								<strong>Link data:</strong> The destination URLs you submit, generated short keys,
+								link status, and optional expiration date.
 							</li>
 							<li>
-								<strong>Technical data:</strong> IP address, browser type, and device information
-								collected automatically through cookies and similar technologies
+								<strong>Usage data:</strong> Aggregate click counts for shortened links.
+							</li>
+							<li>
+								<strong>Support communications:</strong> Information you include when you contact us
+								through our support channels.
 							</li>
 						</ul>
 					</section>
@@ -66,48 +68,52 @@ export default function PrivacyPage() {
 					</section>
 
 					<section className="space-y-3">
-						<h2 className="text-xl font-semibold">3. Data Security</h2>
+						<h2 className="text-xl font-semibold">3. How We Share Information</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
-							We implement appropriate technical and organizational measures to protect your
-							personal information against unauthorized access, alteration, disclosure, or
-							destruction. Your passwords are hashed and never stored in plain text. However, no
-							method of transmission over the Internet is 100% secure, and we cannot guarantee
-							absolute security.
+							We do not sell your personal information. We may share information with service
+							providers that help us operate the Service (for example, hosting, database,
+							authentication, and security providers), when required by law, or to protect our
+							rights, users, and platform.
 						</p>
 					</section>
 
 					<section className="space-y-3">
-						<h2 className="text-xl font-semibold">4. Cookies</h2>
+						<h2 className="text-xl font-semibold">4. Data Security</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
-							We use essential cookies to maintain your session and authenticate your account. These
-							cookies are strictly necessary for the Service to function and cannot be disabled. We
-							do not use cookies for advertising or tracking purposes beyond what is necessary for
-							the Service.
+							We implement technical and organizational safeguards designed to protect personal
+							information from unauthorized access, loss, misuse, and alteration. Passwords are not
+							stored in plain text. However, no method of storage or transmission is completely
+							secure.
 						</p>
 					</section>
 
 					<section className="space-y-3">
-						<h2 className="text-xl font-semibold">5. Third-Party Services</h2>
+						<h2 className="text-xl font-semibold">5. Cookies</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
-							The Service may contain links to third-party websites or services through shortened
-							URLs. We are not responsible for the privacy practices or content of these third-party
-							services. We encourage you to review the privacy policies of any third-party services
-							you visit.
+							We use essential cookies and similar technologies required for authentication and
+							session management. We do not use advertising cookies.
 						</p>
 					</section>
 
 					<section className="space-y-3">
-						<h2 className="text-xl font-semibold">6. Data Retention</h2>
+						<h2 className="text-xl font-semibold">6. Third-Party Links</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
-							We retain your personal information for as long as your account is active or as needed
-							to provide you the Service. If you delete your account, we will delete your personal
-							information within a reasonable timeframe, except where we are required to retain it
-							by law.
+							Shortened links can redirect to third-party websites. We are not responsible for the
+							content, security, or privacy practices of those third-party sites.
 						</p>
 					</section>
 
 					<section className="space-y-3">
-						<h2 className="text-xl font-semibold">7. Your Rights</h2>
+						<h2 className="text-xl font-semibold">7. Data Retention</h2>
+						<p className="text-sm leading-relaxed text-muted-foreground">
+							We retain information for as long as necessary to provide the Service, maintain
+							account security, comply with legal obligations, and resolve disputes. Retention
+							periods may vary based on data type and legal requirements.
+						</p>
+					</section>
+
+					<section className="space-y-3">
+						<h2 className="text-xl font-semibold">8. Your Rights</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
 							Depending on your location, you may have the following rights regarding your personal
 							information:
@@ -126,7 +132,15 @@ export default function PrivacyPage() {
 					</section>
 
 					<section className="space-y-3">
-						<h2 className="text-xl font-semibold">8. Changes to This Policy</h2>
+						<h2 className="text-xl font-semibold">9. Children&apos;s Privacy</h2>
+						<p className="text-sm leading-relaxed text-muted-foreground">
+							The Service is not directed to children under 13, and we do not knowingly collect
+							personal information from children under 13.
+						</p>
+					</section>
+
+					<section className="space-y-3">
+						<h2 className="text-xl font-semibold">10. Changes to This Policy</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
 							We may update this Privacy Policy from time to time. We will notify you of any changes
 							by posting the new Privacy Policy on this page and updating the &quot;Last
@@ -136,7 +150,7 @@ export default function PrivacyPage() {
 					</section>
 
 					<section className="space-y-3">
-						<h2 className="text-xl font-semibold">9. Contact</h2>
+						<h2 className="text-xl font-semibold">11. Contact</h2>
 						<p className="text-sm leading-relaxed text-muted-foreground">
 							If you have any questions about this Privacy Policy, please contact us through our{" "}
 							<a

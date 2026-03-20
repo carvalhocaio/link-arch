@@ -6,7 +6,7 @@ export function AuthLegalFooter() {
 	return (
 		<div className="text-center text-xs text-muted-foreground">
 			<p>
-				&copy; {new Date().getFullYear()} LinkArch. Built by{" "}
+				&copy; {new Date().getFullYear()} Link Arch. Built by{" "}
 				<a
 					href="https://github.com/carvalhocaio"
 					target="_blank"
