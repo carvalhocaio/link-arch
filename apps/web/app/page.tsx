@@ -7,7 +7,6 @@ import {
 	Edit3,
 	ExternalLink,
 	Info,
-	KeyRound,
 	Link2,
 	Loader2,
 	Moon,
@@ -15,7 +14,6 @@ import {
 	Star,
 	Sun,
 	TrendingUp,
-	UploadCloud,
 	Zap,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -40,12 +38,6 @@ import { useUpdateMyUrl } from "@/hooks/use-update-my-url";
 import { type ActivityItem, toActivityItems, toShortUrl } from "@/lib/activity";
 import type { ShortenResponse } from "@/lib/api";
 import { buildQuickStats } from "@/lib/dashboard-metrics";
-
-const trafficOrigins = [
-	{ label: "Direct Traffic", percentage: 65 },
-	{ label: "Referral", percentage: 20 },
-	{ label: "Social", percentage: 15 },
-] as const;
 
 export default function Page() {
 	const { resolvedTheme, setTheme } = useTheme();
@@ -337,138 +329,77 @@ export default function Page() {
 						))}
 					</section>
 
-					<section className="grid gap-8 lg:grid-cols-12">
-						<div className="space-y-5 lg:col-span-8">
-							<div className="flex items-center justify-between">
-								<h2 className="text-lg font-semibold tracking-tight">Recent Activity</h2>
-								<Button variant="link" className="h-auto p-0 text-xs font-semibold" asChild>
-									<Link href="/my-links">View all links</Link>
-								</Button>
-							</div>
-							<div className="space-y-3">
-								{isLoadingMyUrls ? (
-									<p className="rounded-xl border border-border/50 p-4 text-sm text-muted-foreground">
-										Loading links...
-									</p>
-								) : recentActivity.length === 0 ? (
-									<p className="rounded-xl border border-border/50 p-4 text-sm text-muted-foreground">
-										No links yet
-									</p>
-								) : (
-									recentActivity.map((activity) => (
-										<article
-											key={activity.id}
-											className="group flex flex-col gap-4 rounded-xl border border-transparent p-4 transition-all hover:border-border/60 hover:bg-muted/50 sm:flex-row sm:items-center"
-										>
-											<div className="flex min-w-0 flex-1 items-center gap-4">
-												<div className="flex size-5 shrink-0 items-center justify-center overflow-hidden">
-													{activity.favicon ? (
-														<img
-															src={activity.favicon}
-															alt="Favicon"
-															className="size-full object-contain"
-														/>
-													) : (
-														<Link2 className="size-4 text-muted-foreground/80" />
-													)}
-												</div>
-												<div className="min-w-0">
-													<div className="flex items-center gap-2">
-														<p className="truncate text-sm font-semibold">{activity.slug}</p>
-														<span className="shrink-0 text-xs font-semibold text-primary">
-															{activity.clicks.toLocaleString()} clicks
-														</span>
-													</div>
-													<p className="truncate text-xs text-muted-foreground">
-														{activity.destination}
-													</p>
-												</div>
-											</div>
-											<div className="flex items-center gap-1 sm:gap-2">
-												<div className="flex gap-1">
-													<Button
-														variant="ghost"
-														size="icon-sm"
-														aria-label={`Copy ${activity.slug}`}
-														className="cursor-pointer"
-														onClick={() => handleCopyActivityLink(activity)}
-													>
-														<Copy className="size-4" />
-													</Button>
-													<Button
-														variant="ghost"
-														size="icon-sm"
-														aria-label={`Edit ${activity.slug}`}
-														className="cursor-pointer"
-														onClick={() => handleOpenEditActivity(activity)}
-													>
-														<Edit3 className="size-4" />
-													</Button>
-												</div>
-											</div>
-										</article>
-									))
-								)}
-							</div>
+					<section className="space-y-5">
+						<div className="flex items-center justify-between">
+							<h2 className="text-lg font-semibold tracking-tight">Recent Activity</h2>
+							<Button variant="link" className="h-auto p-0 text-xs font-semibold" asChild>
+								<Link href="/my-links">View all links</Link>
+							</Button>
 						</div>
-
-						<div className="space-y-6 lg:col-span-4">
-							<article className="surface-section ghost-border rounded-xl p-6">
-								<h3 className="mb-4 text-sm font-bold tracking-[0.14em] text-muted-foreground uppercase">
-									Traffic Origins
-								</h3>
-								<div className="space-y-4">
-									{trafficOrigins.map((source) => (
-										<div key={source.label} className="flex items-center justify-between gap-3">
-											<span className="text-xs">{source.label}</span>
-											<div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-												<div
-													className="h-full rounded-full bg-primary"
-													style={{ width: `${source.percentage}%` }}
-												/>
+						<div className="space-y-3">
+							{isLoadingMyUrls ? (
+								<p className="rounded-xl border border-border/50 p-4 text-sm text-muted-foreground">
+									Loading links...
+								</p>
+							) : recentActivity.length === 0 ? (
+								<p className="rounded-xl border border-border/50 p-4 text-sm text-muted-foreground">
+									No links yet
+								</p>
+							) : (
+								recentActivity.map((activity) => (
+									<article
+										key={activity.id}
+										className="group flex flex-col gap-4 rounded-xl border border-transparent p-4 transition-all hover:border-border/60 hover:bg-muted/50 sm:flex-row sm:items-center"
+									>
+										<div className="flex min-w-0 flex-1 items-center gap-4">
+											<div className="flex size-5 shrink-0 items-center justify-center overflow-hidden">
+												{activity.favicon ? (
+													<img
+														src={activity.favicon}
+														alt="Favicon"
+														className="size-full object-contain"
+													/>
+												) : (
+													<Link2 className="size-4 text-muted-foreground/80" />
+												)}
 											</div>
-											<span className="w-10 text-right font-mono text-xs">
-												{source.percentage}%
-											</span>
+											<div className="min-w-0">
+												<div className="flex items-center gap-2">
+													<p className="truncate text-sm font-semibold">{activity.slug}</p>
+													<span className="shrink-0 text-xs font-semibold text-primary">
+														{activity.clicks.toLocaleString()} clicks
+													</span>
+												</div>
+												<p className="truncate text-xs text-muted-foreground">
+													{activity.destination}
+												</p>
+											</div>
 										</div>
-									))}
-								</div>
-							</article>
-
-							<article className="relative h-64 overflow-hidden rounded-xl bg-foreground shadow-xl">
-								<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/35 via-transparent to-transparent" />
-								<img
-									src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqyC_06KZXdDxljAOVofrYHb_LaHNbs71Bh4EZxC07Lm1-amodYSlis0i2x4W46L8l3rSU4R3TuazEYisIPobx3Om24VlACkJgyWsyeUuomYe6gjb_mI_y26ZopbEUDhPIaN_gNPzUpvVlWedVkACZjsz8nxu4T4Shu-E-sk1cG6mmvLeb4K1alkiOuqozpRZUXl17JE3rGMeTHYzpkbUtmQZoaUgAZ2lJNXFVD6COkPBLxNpQcvg6Ani6VOmmy5F1Xp5Q3c1XwYoj"
-									alt="Global map"
-									className="size-full object-cover grayscale invert opacity-20"
-								/>
-								<div className="absolute right-4 bottom-4 left-4 rounded-lg border border-white/15 bg-white/10 p-3 backdrop-blur-md">
-									<p className="mb-1 text-[10px] font-bold tracking-[0.13em] text-white/70 uppercase">
-										Live Global Activity
-									</p>
-									<div className="flex items-center gap-2 text-white">
-										<span className="size-2 rounded-full bg-primary animate-pulse" />
-										<p className="text-xs font-medium">New click from London, UK</p>
-									</div>
-								</div>
-							</article>
-
-							<div className="space-y-3">
-								<Button
-									variant="outline"
-									className="h-11 w-full justify-between rounded-md bg-card px-4 text-xs font-semibold"
-								>
-									Bulk Upload Links
-									<UploadCloud className="size-4 text-muted-foreground" />
-								</Button>
-								<Button
-									variant="outline"
-									className="h-11 w-full justify-between rounded-md bg-card px-4 text-xs font-semibold"
-								>
-									Generate API Key
-									<KeyRound className="size-4 text-muted-foreground" />
-								</Button>
-							</div>
+										<div className="flex items-center gap-1 sm:gap-2">
+											<div className="flex gap-1">
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													aria-label={`Copy ${activity.slug}`}
+													className="cursor-pointer"
+													onClick={() => handleCopyActivityLink(activity)}
+												>
+													<Copy className="size-4" />
+												</Button>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													aria-label={`Edit ${activity.slug}`}
+													className="cursor-pointer"
+													onClick={() => handleOpenEditActivity(activity)}
+												>
+													<Edit3 className="size-4" />
+												</Button>
+											</div>
+										</div>
+									</article>
+								))
+							)}
 						</div>
 					</section>
 				</main>
