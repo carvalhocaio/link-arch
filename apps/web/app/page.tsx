@@ -473,70 +473,90 @@ export default function Page() {
 								No links yet
 							</p>
 						) : (
-							recentActivity.map((activity) => (
-								<article
-									key={activity.id}
-									className="group flex flex-col gap-4 rounded-xl border border-transparent p-4 transition-all hover:border-border/60 hover:bg-muted/50 sm:flex-row sm:items-center"
-								>
-									<div className="flex min-w-0 flex-1 items-center gap-4">
-										<div className="flex size-5 shrink-0 items-center justify-center overflow-hidden">
-											{activity.favicon ? (
-												<img
-													src={activity.favicon}
-													alt="Favicon"
-													className="size-full object-contain"
-												/>
-											) : (
-												<Link2 className="size-4 text-muted-foreground/80" />
-											)}
-										</div>
-										<div className="min-w-0">
-											<div className="flex items-center gap-2">
-												<p className="truncate text-sm font-semibold">{activity.slug}</p>
-												<span className="shrink-0 text-xs font-semibold text-primary">
-													{activity.clicks.toLocaleString()} clicks
-												</span>
+							recentActivity.map((activity) => {
+								const urlMeta = myUrlsById.get(activity.id);
+								const isActive = urlMeta?.isActive ?? true;
+
+								return (
+									<article
+										key={activity.id}
+										className="group flex flex-col gap-4 rounded-xl border border-transparent p-4 transition-all hover:border-border/60 hover:bg-muted/50 sm:flex-row sm:items-center"
+									>
+										<div className="flex min-w-0 flex-1 items-center gap-4">
+											<div className="flex size-5 shrink-0 items-center justify-center overflow-hidden">
+												{activity.favicon ? (
+													<img
+														src={activity.favicon}
+														alt="Favicon"
+														className="size-full object-contain"
+													/>
+												) : (
+													<Link2 className="size-4 text-muted-foreground/80" />
+												)}
 											</div>
-											<p className="truncate text-xs text-muted-foreground">
-												{activity.destination}
-											</p>
-											{myUrlsById.get(activity.id)?.expiresAt ? (
-												<p className="mt-0.5 text-[11px] text-muted-foreground/80">
-													Available until{" "}
-													{formatExpiryInBrowserTimezone(myUrlsById.get(activity.id)?.expiresAt)}
+											<div className="min-w-0">
+												<div className="flex items-center gap-2">
+													<a
+														href={toShortUrl(activity.key)}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="truncate text-sm font-semibold underline-offset-4 transition-colors hover:text-primary hover:underline"
+													>
+														{`l.arch${activity.slug}`}
+													</a>
+													<span
+														className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
+															isActive
+																? "bg-primary/10 text-primary"
+																: "bg-muted text-muted-foreground"
+														}`}
+													>
+														{isActive ? "Active" : "Inactive"}
+													</span>
+													<span className="shrink-0 text-xs font-semibold text-primary">
+														{activity.clicks.toLocaleString()} clicks
+													</span>
+												</div>
+												<p className="truncate text-xs text-muted-foreground">
+													{activity.destination}
 												</p>
-											) : null}
+												{urlMeta?.expiresAt ? (
+													<p className="mt-0.5 text-[11px] text-muted-foreground/80">
+														Available until {formatExpiryInBrowserTimezone(urlMeta.expiresAt)}
+													</p>
+												) : null}
+											</div>
 										</div>
-									</div>
-									<div className="flex items-center gap-1 sm:gap-2">
-										<div className="flex gap-1">
-											<Button
-												variant="ghost"
-												size="icon-sm"
-												aria-label={`Copy ${activity.slug}`}
-												className="cursor-pointer"
-												onClick={() => handleCopyActivityLink(activity)}
-											>
-												<Copy className="size-4" />
-											</Button>
-											<Button
-												variant="ghost"
-												size="icon-sm"
-												aria-label={`Edit ${activity.slug}`}
-												className="cursor-pointer"
-												onClick={() => handleOpenEditActivity(activity)}
-											>
-												<Edit3 className="size-4" />
-											</Button>
-											<DeleteUrlAction
-												onConfirm={() => handleDeleteActivity(activity)}
-												isPending={isDeletingUrl}
-												ariaLabel="Delete"
-											/>
+										<div className="flex items-center gap-1 sm:gap-2">
+											<div className="flex gap-1">
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													aria-label={`Copy ${activity.slug}`}
+													className="cursor-pointer"
+													onClick={() => handleCopyActivityLink(activity)}
+												>
+													<Copy className="size-4" />
+												</Button>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													aria-label={`Edit ${activity.slug}`}
+													className="cursor-pointer"
+													onClick={() => handleOpenEditActivity(activity)}
+												>
+													<Edit3 className="size-4" />
+												</Button>
+												<DeleteUrlAction
+													onConfirm={() => handleDeleteActivity(activity)}
+													isPending={isDeletingUrl}
+													ariaLabel="Delete"
+												/>
+											</div>
 										</div>
-									</div>
-								</article>
-							))
+									</article>
+								);
+							})
 						)}
 					</div>
 				</section>
