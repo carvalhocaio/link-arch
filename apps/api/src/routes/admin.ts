@@ -1,9 +1,9 @@
 import { Elysia, t } from "elysia";
 import { authMiddleware } from "../lib/auth-middleware";
 import {
-	deactivateUrlByIdAndUserId,
 	getUrlsByUserId,
 	softDeleteUrlByIdAndUserId,
+	updateUrlStatusByIdAndUserId,
 	updateUrlTargetByIdAndUserId,
 } from "../services/url.service";
 import { isUrlReachable } from "../services/validator";
@@ -71,26 +71,36 @@ export const adminRoutes = new Elysia({ prefix: "/api/admin" })
 			},
 		},
 	)
-	.post(
-		"/urls/:id/deactivate",
-		async ({ params, set, user }) => {
-			const updated = await deactivateUrlByIdAndUserId(params.id, user.id);
+	.patch(
+		"/urls/:id/status",
+		async ({ params, body, set, user }) => {
+			const updated = await updateUrlStatusByIdAndUserId(params.id, user.id, body.isActive);
 
 			if (!updated) {
 				set.status = 404;
 				return { error: "URL not found" };
 			}
 
-			return { deactivated: { id: updated.id, key: updated.key, isActive: updated.isActive } };
+			return {
+				id: updated.id,
+				key: updated.key,
+				targetUrl: updated.targetUrl,
+				clicks: updated.clicks,
+				isActive: updated.isActive,
+				createdAt: updated.createdAt,
+			};
 		},
 		{
 			auth: true,
 			params: t.Object({
 				id: t.Numeric(),
 			}),
+			body: t.Object({
+				isActive: t.Boolean(),
+			}),
 			detail: {
 				tags: ["Admin"],
-				summary: "Deactivate one of my URLs",
+				summary: "Update one of my URL statuses",
 			},
 		},
 	)

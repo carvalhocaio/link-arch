@@ -11,6 +11,7 @@ import {
 	Loader2,
 	MousePointer2,
 	Star,
+	Trash2,
 	TrendingUp,
 	Zap,
 } from "lucide-react";
@@ -20,6 +21,17 @@ import { toast } from "sonner";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { AppTopbar } from "@/components/app-topbar";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -30,9 +42,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Switch } from "@/components/ui/switch";
+import { useDeleteMyUrl } from "@/hooks/use-delete-my-url";
 import { useMyUrls } from "@/hooks/use-my-urls";
 import { useShortenUrl } from "@/hooks/use-shorten-url";
 import { useUpdateMyUrl } from "@/hooks/use-update-my-url";
+import { useUpdateMyUrlStatus } from "@/hooks/use-update-my-url-status";
 import { type ActivityItem, toActivityItems, toShortUrl } from "@/lib/activity";
 import type { ShortenResponse } from "@/lib/api";
 import { buildQuickStats } from "@/lib/dashboard-metrics";
@@ -44,10 +59,16 @@ export default function Page() {
 	const [copied, setCopied] = useState(false);
 	const [editingActivity, setEditingActivity] = useState<ActivityItem | null>(null);
 	const [editingUrl, setEditingUrl] = useState("");
+	const [editingIsActive, setEditingIsActive] = useState(true);
 	const { mutate: shortenLink, isPending: isShortening } = useShortenUrl();
 	const { mutate: updateMyUrl, isPending: isUpdatingUrl } = useUpdateMyUrl();
+	const { mutate: updateMyUrlStatus, isPending: isUpdatingUrlStatus } = useUpdateMyUrlStatus();
+	const { mutate: deleteMyUrl, isPending: isDeletingUrl } = useDeleteMyUrl();
 	const quickStats = useMemo(() => buildQuickStats(myUrls ?? []), [myUrls]);
-	const recentActivity = useMemo(() => toActivityItems(myUrls ?? []).slice(0, 5), [myUrls]);
+	const recentActivity = useMemo(() => toActivityItems(myUrls ?? []).slice(0, 3), [myUrls]);
+	const myUrlsById = useMemo(() => {
+		return new Map((myUrls ?? []).map((url) => [url.id, url]));
+	}, [myUrls]);
 
 	const normalizedUrl = url.trim();
 	const isUrlValid = isValidUrl(normalizedUrl);
@@ -102,12 +123,14 @@ export default function Page() {
 	function handleOpenEditActivity(activity: ActivityItem) {
 		setEditingActivity(activity);
 		setEditingUrl(activity.targetUrl);
+		setEditingIsActive(myUrlsById.get(activity.id)?.isActive ?? true);
 	}
 
 	function handleEditModalChange(open: boolean) {
 		if (!open) {
 			setEditingActivity(null);
 			setEditingUrl("");
+			setEditingIsActive(true);
 		}
 	}
 
@@ -117,19 +140,79 @@ export default function Page() {
 		}
 
 		const normalizedEditUrl = editingUrl.trim();
+		const currentIsActive = myUrlsById.get(editingActivity.id)?.isActive ?? true;
+		const statusChanged = currentIsActive !== editingIsActive;
+		const hasUrlChange = normalizedEditUrl !== editingActivity.targetUrl;
+
+		if (!statusChanged && !hasUrlChange) {
+			toast.message("No changes to save");
+			return;
+		}
 
 		if (!isValidUrl(normalizedEditUrl)) {
 			toast.error("Please enter a valid URL");
 			return;
 		}
 
-		updateMyUrl(
-			{ id: editingActivity.id, url: normalizedEditUrl },
+		if (hasUrlChange) {
+			updateMyUrl(
+				{ id: editingActivity.id, url: normalizedEditUrl },
+				{
+					onSuccess: () => {
+						if (statusChanged) {
+							updateMyUrlStatus(
+								{ id: editingActivity.id, isActive: editingIsActive },
+								{
+									onSuccess: () => {
+										toast.success("Link updated");
+										setEditingActivity(null);
+										setEditingUrl("");
+										setEditingIsActive(true);
+									},
+									onError: (error) => {
+										toast.error(error.message);
+									},
+								},
+							);
+							return;
+						}
+
+						toast.success("Link destination updated");
+						setEditingActivity(null);
+						setEditingUrl("");
+						setEditingIsActive(true);
+					},
+					onError: (error) => {
+						toast.error(error.message);
+					},
+				},
+			);
+
+			return;
+		}
+
+		updateMyUrlStatus(
+			{ id: editingActivity.id, isActive: editingIsActive },
 			{
 				onSuccess: () => {
-					toast.success("Link destination updated");
+					toast.success("Link status updated");
 					setEditingActivity(null);
 					setEditingUrl("");
+					setEditingIsActive(true);
+				},
+				onError: (error) => {
+					toast.error(error.message);
+				},
+			},
+		);
+	}
+
+	function handleDeleteActivity(activity: ActivityItem) {
+		deleteMyUrl(
+			{ id: activity.id },
+			{
+				onSuccess: () => {
+					toast.success("Link deleted");
 				},
 				onError: (error) => {
 					toast.error(error.message);
@@ -248,16 +331,31 @@ export default function Page() {
 									value={editingUrl}
 									onChange={(event) => setEditingUrl(event.target.value)}
 									placeholder="https://example.com/path"
-									disabled={isUpdatingUrl}
+									disabled={isUpdatingUrl || isUpdatingUrlStatus}
 									className="ghost-border h-10 bg-card text-xs"
 								/>
+								<div className="flex items-center justify-between rounded-md border border-border/50 px-3 py-2">
+									<div>
+										<p className="text-sm font-medium">Link active</p>
+										<p className="text-xs text-muted-foreground">
+											Disable to stop redirects for this link.
+										</p>
+									</div>
+									<Switch
+										checked={editingIsActive}
+										onCheckedChange={setEditingIsActive}
+										disabled={isUpdatingUrl || isUpdatingUrlStatus}
+									/>
+								</div>
 								<Button
 									onClick={handleSaveEditedUrl}
-									disabled={isUpdatingUrl}
+									disabled={isUpdatingUrl || isUpdatingUrlStatus}
 									className="w-full cursor-pointer"
 								>
-									{isUpdatingUrl ? "Saving..." : "Save changes"}
-									{isUpdatingUrl ? <Loader2 className="size-4 animate-spin" /> : null}
+									{isUpdatingUrl || isUpdatingUrlStatus ? "Saving..." : "Save changes"}
+									{isUpdatingUrl || isUpdatingUrlStatus ? (
+										<Loader2 className="size-4 animate-spin" />
+									) : null}
 								</Button>
 							</div>
 						</DialogContent>
@@ -378,6 +476,36 @@ export default function Page() {
 												>
 													<Edit3 className="size-4" />
 												</Button>
+												<AlertDialog>
+													<AlertDialogTrigger asChild>
+														<Button
+															variant="ghost"
+															size="icon-sm"
+															aria-label="Delete"
+															className="cursor-pointer"
+														>
+															<Trash2 className="size-4" />
+														</Button>
+													</AlertDialogTrigger>
+													<AlertDialogContent>
+														<AlertDialogHeader>
+															<AlertDialogTitle>Delete this link?</AlertDialogTitle>
+															<AlertDialogDescription>
+																This action performs a soft delete. The link will disappear from
+																your list but remain stored in the database.
+															</AlertDialogDescription>
+														</AlertDialogHeader>
+														<AlertDialogFooter>
+															<AlertDialogCancel>Cancel</AlertDialogCancel>
+															<AlertDialogAction
+																onClick={() => handleDeleteActivity(activity)}
+																disabled={isDeletingUrl}
+															>
+																{isDeletingUrl ? "Deleting..." : "Delete link"}
+															</AlertDialogAction>
+														</AlertDialogFooter>
+													</AlertDialogContent>
+												</AlertDialog>
 											</div>
 										</div>
 									</article>

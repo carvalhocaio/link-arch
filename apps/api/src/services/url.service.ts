@@ -63,6 +63,16 @@ export async function deactivateUrlByIdAndUserId(id: number, userId: string) {
 	return updated;
 }
 
+export async function updateUrlStatusByIdAndUserId(id: number, userId: string, isActive: boolean) {
+	const [updated] = await db
+		.update(urls)
+		.set({ isActive, updatedAt: new Date() })
+		.where(and(eq(urls.id, id), eq(urls.userId, userId), eq(urls.isDeleted, false)))
+		.returning();
+
+	return updated;
+}
+
 export async function updateUrlTargetByIdAndUserId(id: number, userId: string, targetUrl: string) {
 	const [updated] = await db
 		.update(urls)

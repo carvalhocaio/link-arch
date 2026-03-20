@@ -32,6 +32,11 @@ export interface UpdateMyUrlPayload {
 	url: string;
 }
 
+export interface UpdateMyUrlStatusPayload {
+	id: number;
+	isActive: boolean;
+}
+
 export interface DeleteMyUrlPayload {
 	id: number;
 }
@@ -88,6 +93,22 @@ export async function updateMyUrl(payload: UpdateMyUrlPayload): Promise<AdminUrl
 	if (!response.ok) {
 		const error: ShortenErrorResponse = await response.json();
 		throw new Error(error.error ?? "Failed to update URL");
+	}
+
+	return response.json();
+}
+
+export async function updateMyUrlStatus(payload: UpdateMyUrlStatusPayload): Promise<AdminUrl> {
+	const response = await fetch(`${API_URL}/api/admin/urls/${payload.id}/status`, {
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
+		credentials: "include",
+		body: JSON.stringify({ isActive: payload.isActive }),
+	});
+
+	if (!response.ok) {
+		const error: ShortenErrorResponse = await response.json();
+		throw new Error(error.error ?? "Failed to update URL status");
 	}
 
 	return response.json();
