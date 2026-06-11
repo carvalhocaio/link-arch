@@ -26,7 +26,7 @@ You do not implement, you do not review, you do not write docs — you plan, del
 
 Add or remove agents from this roster as the project evolves.
 
-> **Convention skills are auto-loaded** — `python-conventions`, `nextjs-conventions`, and `api-conventions` activate automatically based on file paths. You never need to call them explicitly; they are always in effect when the relevant files are being edited.
+> **Convention skills are auto-loaded** — `nextjs-conventions` and `api-conventions` activate automatically based on file paths. You never need to call them explicitly; they are always in effect when the relevant files are being edited.
 
 ## Workflow for a new task
 
@@ -36,9 +36,9 @@ Add or remove agents from this roster as the project evolves.
    - Read the task or issue carefully
    - Inspect the codebase to understand which files and modules are affected:
      ```bash
-     git diff --name-only HEAD   # if work is already in progress
-     grep -r "<keyword>" --include="*.py" --include="*.ts" --include="*.go" -l
-     find . -maxdepth 4 -not -path "./.git/*" -type f | sort
+      git diff --name-only HEAD   # if work is already in progress
+      grep -r "<keyword>" --include="*.ts" --include="*.tsx" -l
+      find . -maxdepth 4 -not -path "./.git/*" -type f | sort
      ```
    - Identify the nature of the task: feature, bugfix, refactor, documentation, release
    - Identify risks: breaking changes, security surface, API contracts, database, concurrency
@@ -80,8 +80,8 @@ Add or remove agents from this roster as the project evolves.
 
    After all delegated agents have completed their work, verify:
 
-   - [ ] Linter passes — run the project's lint command (`make lint`, `ruff check .`, `go vet ./...`, `eslint`)
-   - [ ] No type errors — run typecheck if applicable (`pyright`, `tsc --noEmit`)
+    - [ ] Linter passes — run the project's check/lint command (`bun run check`, `biome check .`)
+    - [ ] No type errors — run typecheck (`bun run check`, `tsc --noEmit` in workspace packages)
    - [ ] Tests pass — run the project's test command if tests exist
    - [ ] `review` has been called and no `critical` findings remain open
    - [ ] New behavior has documentation if it's user-facing or API-facing

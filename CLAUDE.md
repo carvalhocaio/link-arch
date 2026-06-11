@@ -22,14 +22,14 @@ Start complex tasks with `tech-lead` — it will orchestrate the right agents in
 
 Skills are invoked with `/skill-name` in the Claude Code prompt. Some skills accept an optional argument: `/commit`, `/review path/to/file`, `/changelog v1.3.0`.
 
-**Convention skills** (`python-conventions`, `nextjs-conventions`, `api-conventions`) are **path-based** — they activate automatically when Claude reads or writes files matching their `paths` patterns. They are never invoked manually.
+**Convention skills** (`nextjs-conventions`, `api-conventions`) are **path-based** — they activate automatically when Claude reads or writes files matching their `paths` patterns. They are never invoked manually.
 
 ## Agents
 
 | Agent               | Invoke as       | Role                                                        |
 | ------------------- | --------------- | ----------------------------------------------------------- |
 | `tech-lead`         | subagent / name | Orchestrates complex tasks, delegates, validates gates      |
-| `backend-engineer`  | subagent / name | Implements backend code (Python/FastAPI, Go, Node.js)       |
+| `backend-engineer`  | subagent / name | Implements backend code (Bun, Elysia.js, Better Auth, Drizzle) |
 | `frontend-engineer` | subagent / name | Implements frontend code (Next.js, React, TypeScript)       |
 
 ## Skills
@@ -48,7 +48,6 @@ Skills are invoked with `/skill-name` in the Claude Code prompt. Some skills acc
 
 | Skill                  | Activates on                                    |
 | ---------------------- | ----------------------------------------------- |
-| `python-conventions`   | `**/*.py`                                       |
 | `nextjs-conventions`   | `**/*.ts`, `**/*.tsx` (excluding test files)    |
 | `api-conventions`      | `**/routes/**`, `**/api/**`, `**/handlers/**`… |
 

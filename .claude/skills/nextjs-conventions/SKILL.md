@@ -13,8 +13,8 @@ Apply these conventions whenever you read or write TypeScript/React files in thi
 
 ## Tooling
 
-- Run `eslint` and `tsc --noEmit` before considering a file done
-- Check `package.json` for pnpm/npm/yarn — use the one already in use
+- Run `biome check .` and `tsc --noEmit` before considering a file done
+- We use **Bun** (`bun`) as our runtime and package manager. Always use `bun` for script running and package installations.
 
 ## TypeScript
 
@@ -50,9 +50,9 @@ Apply these conventions whenever you read or write TypeScript/React files in thi
 
 ## Styling
 
-- Follow the approach already in the project (Tailwind, CSS Modules, etc.)
-- No inline `style={{}}` when Tailwind is available
-- Responsive classes follow mobile-first: `text-sm md:text-base lg:text-lg`
+- We use **Tailwind CSS v4** for styling. No inline `style={{}}` when Tailwind classes are available.
+- Responsive classes follow mobile-first: `text-sm md:text-base lg:text-lg`.
+- Leverage dynamic Tailwind classes combinations with the `cn` utility function.
 
 ## Accessibility
 

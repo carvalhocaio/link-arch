@@ -80,13 +80,20 @@ Apply these conventions whenever you design or modify API endpoints in this proj
 
 ## Security
 
-- Validate and sanitize all inputs before use
-- Never build queries with string concatenation
-- Sensitive fields (`password`, `token`, `secret`) never appear in responses or logs
-- Auth tokens go in the `Authorization: Bearer <token>` header — never in query params
+- Validate and sanitize all inputs before use. In **Elysia**, always define inputs/outputs using the native `t` schemas (e.g., `t.Object`, `t.String({ format: 'uri' })`) on routes to auto-validate and construct correct OpenAPI docs.
+- Use our authentication middleware (`isAuthenticated`) to protect API routes.
+- Never build queries with string concatenation. Use Drizzle's parameterized query builder.
+- Sensitive fields (`password`, `token`, `secret`) never appear in responses or logs.
+- Auth tokens and sessions are handled securely by **Better Auth** cookies and headers.
 
 ## Backwards compatibility
 
-- Never remove or rename a response field — add new fields, deprecate old ones
-- Never change the type of an existing field
-- Breaking changes require a new API version (`/v2/`)
+- Never remove or rename a response field — add new fields, deprecate old ones.
+- Never change the type of an existing field.
+- Breaking changes require a new API version (`/v2/`).
+
+## Elysia.js & Better Auth Specifics
+
+- **Type safety & schema**: Always define query, params, headers, and body constraints on routes. Elysia infers types automatically from schemas.
+- **Route handlers**: Keep handlers lean. Offload complex business logic (e.g. key generation, reachability checking) to services inside `apps/api/src/services/`.
+- **OpenAPI auto-generation**: Document descriptions and tags directly in route hooks to ensure the Swagger/OpenAPI spec remains rich and accurate.

@@ -37,7 +37,7 @@ Apply **Clean Code** (Robert C. Martin) and **SOLID** principles as primary guid
    - **No comments explaining bad code**: code should be self-explanatory; comments are for the *why*, never the *what*
    - **No dead code**: commented-out blocks, unused variables, unnecessary imports
    - **No magic numbers or loose string literals**: use named constants
-   - **Explicit error handling**: errors must not be silenced (`except: pass`, `catch {}`) without justification
+    - **Explicit error handling**: errors must not be silenced (e.g. empty `catch {}` block) without clear justification
    - **No duplication (DRY)**: logic repeated in two or more places is a candidate for extraction
 
    **SOLID Principles**
