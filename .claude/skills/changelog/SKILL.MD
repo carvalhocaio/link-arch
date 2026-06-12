@@ -99,6 +99,19 @@ You are a specialized release documentation agent. Your mission is to generate o
    - if confirmed: save using `Write` or `Edit`
    - if adjustments are suggested: apply them and confirm again
 
+8. **Trigger the GitHub Release** (optional)
+
+   After saving the CHANGELOG, inform the user how to publish the release:
+
+   ```bash
+   git add CHANGELOG.md
+   git commit -m "chore: release vX.Y.Z"
+   git tag vX.Y.Z
+   git push origin vX.Y.Z
+   ```
+
+   Pushing the tag triggers the `.github/workflows/release.yml` workflow, which automatically creates a GitHub Release with generated release notes.
+
 ## Rules
 
 - date always in `YYYY-MM-DD` format

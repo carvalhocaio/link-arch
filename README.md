@@ -155,6 +155,14 @@ GET /openapi
 
 You can import this spec into tools like [Swagger UI](https://swagger.io/tools/swagger-ui/) or [Scalar](https://scalar.com).
 
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for a detailed breakdown of the monorepo layout, tech stack decisions, database schema, API design, authentication flow, and testing strategy.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the full release history.
+
 ## Load Testing
 
 A [k6](https://k6.io) script is included to benchmark API latency under load.
@@ -179,3 +187,7 @@ k6 run -e BASE_URL=http://your-host:3000 apps/api/k6/latency.js
 - Sustains 50 virtual users for 20 seconds, then ramps down over 10 seconds
 - Each iteration creates a short URL, peeks it, and follows redirect
 - Threshold: p95 response time under **200ms**
+
+## License
+
+[MIT](LICENSE) — free to use, modify, and distribute. Attribution appreciated.

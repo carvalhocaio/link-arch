@@ -18,6 +18,7 @@ The user can invoke this agent with the following arguments (`$ARGUMENTS`):
 | -------- | ------------ |
 | *(no argument)* | Interactive mode: analyzes the project and suggests actions |
 | `readme` | Generates or updates `README.md` |
+| `architecture` | Generates or updates `ARCHITECTURE.md` |
 | `new <name>` | Creates a new documentation file (e.g. `new CONTRIBUTING`) |
 | `update <file>` | Updates an existing `.md` based on the current state of the code |
 | `remove <file>` | Removes a `.md` documentation file with confirmation |
@@ -29,6 +30,74 @@ The user can invoke this agent with the following arguments (`$ARGUMENTS`):
 2. Read `README.md` if it exists
 3. Inspect the project structure with `find . -maxdepth 3 -type f | grep -v ".git"` to understand what exists
 4. Present the user with a summary of the documentation state and ask what they want to do
+
+## `architecture` flow
+
+1. **Collect project information**
+
+   Read the following to build an accurate picture before writing:
+
+   ```bash
+   # Apps and packages
+   find . -maxdepth 3 -not -path "./.git/*" -not -path "*/node_modules/*" -type f -name "package.json"
+
+   # Database schema
+   cat packages/db/src/schema.ts
+   cat packages/db/src/auth-schema.ts
+
+   # API routes
+   find apps/api/src/routes -type f -name "*.ts"
+
+   # Tech versions
+   cat package.json
+   ```
+
+   Also read `apps/api/src/index.ts` to understand middleware and route mounting.
+
+2. **Check for an existing `ARCHITECTURE.md`**
+
+   If it exists: identify which sections are outdated (tech versions, missing routes, removed features). Never discard sections the user wrote manually.
+
+3. **Generate or update `ARCHITECTURE.md`**
+
+   Follow this structure (numbered sections, ASCII diagrams where helpful, justify each tech decision):
+
+   ```markdown
+   # Architecture
+
+   ## 1. Overview
+   One paragraph + ASCII system diagram (Browser → Frontend → API → Database)
+
+   ## 2. Monorepo layout
+   Table: path | type | responsibility
+
+   ## 3. Tech stack decisions
+   For each major dependency: what it is and why it was chosen over alternatives
+
+   ## 4. Database schema
+   Tables with columns, types, constraints, and key decisions (soft delete, indexes, etc.)
+
+   ## 5. API design
+   Route groups table: group | routes | auth required
+
+   ## 6. Authentication flow
+   ASCII sequence diagram showing sign-up/sign-in and session middleware
+
+   ## 7. Frontend architecture
+   App Router structure, data fetching strategy, component organization
+
+   ## 8. Testing strategy
+   Table: layer | tool | location | scope
+
+   ## 9. Known limitations
+   Honest list of what the system does not yet handle
+   ```
+
+   Omit sections that genuinely don't apply.
+
+4. **Confirm before saving**
+
+   Display the generated content and ask: _"Save this ARCHITECTURE.md? (y/n) I can also adjust any section."_
 
 ## `readme` flow
 
