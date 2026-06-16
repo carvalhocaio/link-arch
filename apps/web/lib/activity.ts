@@ -27,7 +27,7 @@ export function toActivityItems(urls: AdminUrl[]): ActivityItem[] {
 }
 
 export function toShortUrl(key: string) {
-	const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+	const baseUrl = typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
 	return `${baseUrl}/${key}`;
 }
 
