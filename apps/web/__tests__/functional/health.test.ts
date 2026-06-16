@@ -3,13 +3,13 @@ import { GET } from "../../app/api/health/route";
 
 describe("GET /api/health", () => {
 	it("returns 200", async () => {
-		const req = new Request("http://localhost/api/health");
-		const res = await GET();
+		new Request("http://localhost/api/health");
+		const res = GET();
 		expect(res.status).toBe(200);
 	});
 
 	it("returns JSON with expected shape", async () => {
-		const res = await GET();
+		const res = GET();
 		const body = await res.json();
 		expect(body).toHaveProperty("title");
 		expect(body).toHaveProperty("version");
@@ -19,13 +19,13 @@ describe("GET /api/health", () => {
 	});
 
 	it("returns the correct title", async () => {
-		const res = await GET();
+		const res = GET();
 		const body = await res.json();
 		expect(body.title).toBe("Link Arch");
 	});
 
 	it("returns a semver-like version string", async () => {
-		const res = await GET();
+		const res = GET();
 		const body = await res.json();
 		expect(body.version).toMatch(/^\d+\.\d+\.\d+/);
 	});

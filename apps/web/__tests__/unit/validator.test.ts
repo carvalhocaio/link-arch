@@ -38,12 +38,12 @@ describe("isUrlReachable", () => {
 
 	it("returns false when request is aborted (timeout)", async () => {
 		spyOn(globalThis, "fetch").mockImplementation(
-			(_url, options) =>
+			((_url: any, options?: any) =>
 				new Promise((_resolve, reject) => {
 					options?.signal?.addEventListener("abort", () =>
 						reject(new DOMException("Aborted", "AbortError")),
 					);
-				}),
+				})) as any,
 		);
 		expect(await isUrlReachable("https://slow.example.com", 10)).toBe(false);
 	});
