@@ -10,7 +10,7 @@ test("GET /api/health returns 200 with expected shape", async ({ request }) => {
 
 test("home page loads and renders the main heading", async ({ page }) => {
 	await page.goto("/");
-	await expect(page).toHaveTitle(/Link Arch/i);
+	await expect(page).toHaveTitle(/LinkArch/i);
 });
 
 test("unknown key returns a response (not a crash)", async ({ request }) => {

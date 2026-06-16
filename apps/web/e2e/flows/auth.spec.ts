@@ -17,7 +17,7 @@ test("unauthenticated user is redirected from /my-links to /login", async ({
 test("sign-in page renders the Google sign-in button", async ({ page }) => {
 	await page.goto("/login");
 	const signInButton = page.getByRole("button", {
-		name: /sign in with google/i,
+		name: /continue with google/i,
 	});
 	await expect(signInButton).toBeVisible();
 });
