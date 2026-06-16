@@ -6,6 +6,22 @@ Follows [Keep a Changelog](https://keepachangelog.com/) and [Semantic Versioning
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-06-15
+
+### Breaking Changes
+- Authentication switched from email/password to Google OAuth exclusively — existing credential accounts cannot log in; users must authenticate via Google. (#e2b7381)
+
+### Added
+- Public landing page at `/` with hero, feature highlights, and call-to-action. (#8fb3839)
+- `/dashboard` route (previously `/`) protected by middleware — unauthenticated users are redirected to `/login`. (#8fb3839)
+- `/login` route replacing `/sign-in`, managed by Better Auth's OAuth handler. (#8fb3839)
+- Next.js proxy middleware protecting `/dashboard` and `/my-links`, and redirecting already-authenticated users away from `/login`. (#8fb3839)
+- Account linking support: users with a pre-existing email can connect their Google account automatically. (#12a1ed2)
+
+### Fixed
+- Google sign-in button now correctly initiates OAuth via `POST /api/auth/sign-in/social` (GET returned 404). (#12a1ed2)
+- Sign-in failures now surface a toast notification instead of silently freezing the button. (#8a4e6e5)
+
 ## [1.0.0] - 2026-06-11
 
 ### Added
