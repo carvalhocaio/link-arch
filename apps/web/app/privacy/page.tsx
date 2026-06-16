@@ -11,7 +11,7 @@ export default function PrivacyPage() {
 			<div className="mx-auto max-w-3xl px-4 py-16">
 				<div className="mb-4">
 					<Link
-						href="/login"
+						href="/"
 						className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary"
 					>
 						&larr; Back
