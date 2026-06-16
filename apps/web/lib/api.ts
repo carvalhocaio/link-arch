@@ -1,3 +1,5 @@
+import { authClient } from "@/lib/auth-client";
+
 export interface ShortenResponse {
 	shortUrl: string;
 	key: string;
@@ -179,12 +181,9 @@ export async function getSession(): Promise<SessionResponse> {
 }
 
 export async function signOut(): Promise<void> {
-	const response = await fetch("/api/auth/sign-out", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-	});
+	const { error } = await authClient.signOut();
 
-	if (!response.ok) {
-		throw new Error("Failed to sign out");
+	if (error) {
+		throw new Error(error.message ?? "Failed to sign out");
 	}
 }
