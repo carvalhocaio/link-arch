@@ -4,7 +4,6 @@ import { Elysia } from "elysia";
 import { auth } from "./lib/auth";
 import { env } from "./lib/env";
 import { adminRoutes } from "./routes/admin";
-import { authRoutes } from "./routes/auth";
 import { healthRoutes } from "./routes/health";
 import { redirectRoutes } from "./routes/redirect";
 import { shortenRoutes } from "./routes/shorten";
@@ -36,7 +35,6 @@ const app = new Elysia()
 	)
 	.mount(auth.handler)
 	.use(healthRoutes)
-	.use(authRoutes)
 	.use(shortenRoutes)
 	.use(redirectRoutes)
 	.use(adminRoutes)

@@ -174,55 +174,6 @@ export interface AuthSession {
 	expiresAt: string;
 }
 
-export interface AuthResponse {
-	user: AuthUser;
-	session: AuthSession;
-}
-
-export interface SignInPayload {
-	email: string;
-	password: string;
-}
-
-export interface SignUpPayload {
-	name: string;
-	email: string;
-	password: string;
-	passwordConfirmation: string;
-}
-
-export async function signIn(payload: SignInPayload): Promise<AuthResponse> {
-	const response = await fetch(`${API_URL}/api/auth/sign-in`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		credentials: "include",
-		body: JSON.stringify(payload),
-	});
-
-	if (!response.ok) {
-		const error = await response.json();
-		throw new Error(error.error ?? "Invalid credentials");
-	}
-
-	return response.json();
-}
-
-export async function signUp(payload: SignUpPayload): Promise<AuthResponse> {
-	const response = await fetch(`${API_URL}/api/auth/sign-up`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		credentials: "include",
-		body: JSON.stringify(payload),
-	});
-
-	if (!response.ok) {
-		const error = await response.json();
-		throw new Error(error.error ?? "Failed to create account");
-	}
-
-	return response.json();
-}
-
 export interface SessionResponse {
 	user: AuthUser;
 	session: AuthSession;
