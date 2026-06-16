@@ -4,9 +4,11 @@ import { createShortUrl, UrlKeyAlreadyExistsError } from "@/lib/services/url.ser
 import { isUrlReachable } from "@/lib/services/validator";
 import { normalizeCustomKey, getCustomKeyValidationError } from "@/lib/services/keygen";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001";
-
 export async function POST(request: Request) {
+	const proto = request.headers.get("x-forwarded-proto") ?? "http";
+	const host = request.headers.get("host") ?? "localhost:3001";
+	const BASE_URL = `${proto}://${host}`;
+
 	const session = await auth.api.getSession({ headers: request.headers });
 	if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
