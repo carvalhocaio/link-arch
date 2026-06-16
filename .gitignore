@@ -31,3 +31,4 @@ coverage/
 # Agents Skills
 .agents/
 skills-lock.json
+.vercel

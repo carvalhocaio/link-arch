@@ -1,6 +1,6 @@
 # Link Arch
 
-Link Arch is a fast, lightweight link management platform built with Bun, Elysia, and Next.js. It supports authenticated URL shortening, custom aliases, click tracking, URL lifecycle management, and auto-generated OpenAPI docs.
+Link Arch is a fast, lightweight link management platform built with Next.js and Bun. It supports authenticated URL shortening, custom aliases, click tracking, URL lifecycle management, and Google OAuth sign-in.
 
 ## Features
 
@@ -10,37 +10,23 @@ Link Arch is a fast, lightweight link management platform built with Bun, Elysia
 - Link administration: update destination, update key, toggle active status, set expiry date, and soft delete
 - Redirect and non-redirect preview (`/:key/peek`) endpoints
 - Dashboard and My Links UI with search, filtering, sorting, pagination, and CSV export
-- OpenAPI documentation generated directly from route schemas
 
 ## Tech Stack
 
-### Backend
-
 - **Runtime:** [Bun](https://bun.sh)
-- **Framework:** [Elysia](https://elysiajs.com)
-- **Auth:** [Better Auth](https://www.better-auth.com)
+- **Framework:** [Next.js](https://nextjs.org) 16 (App Router, Turbopack) — serves both frontend and API via Route Handlers
+- **Auth:** [Better Auth](https://www.better-auth.com) with Google OAuth
 - **Database:** PostgreSQL
 - **ORM:** [Drizzle ORM](https://orm.drizzle.team) (with [postgres.js](https://github.com/porsager/postgres) driver)
-
-### Frontend
-
-- **Framework:** [Next.js](https://nextjs.org) 16 (App Router, Turbopack)
 - **UI Components:** [shadcn/ui](https://ui.shadcn.com) v4
 - **Data Fetching:** [TanStack React Query](https://tanstack.com/query) v5
-- **Theming:** [next-themes](https://github.com/pacocoursey/next-themes) (system, light, dark)
-- **Notifications:** [Sonner](https://sonner.emilkowal.dev)
-
-### Tooling
-
 - **Monorepo:** [Turborepo](https://turbo.build)
 - **Linter/Formatter:** [Biome](https://biomejs.dev)
-- **Load Testing:** [k6](https://k6.io)
 
 ## Prerequisites
 
 - [Bun](https://bun.sh) v1.2.0+
 - [PostgreSQL](https://www.postgresql.org) running locally or remotely
-- [k6](https://k6.io) (optional, for load testing)
 
 ## Getting Started
 
@@ -60,29 +46,25 @@ bun install
 ### 3. Configure environment variables
 
 ```bash
-cp .env.example .env
+cp apps/web/.env.example apps/web/.env.local
 ```
 
-Set values in `.env`:
+Set values in `apps/web/.env.local`:
 
 | Variable | Description | Default |
 |---|---|---|
-| `DATABASE_URL` | PostgreSQL connection string used by API and migrations | _(required)_ |
-| `PORT` | API server listen port | `3000` |
-| `BASE_URL` | Public API base URL used to build short links | `http://localhost:3000` |
-| `WEB_URL` | Allowed web origin for CORS and trusted auth origins | `http://localhost:3001` |
-| `FORWARD_TIMEOUT_MS` | Timeout in milliseconds for URL reachability checks | `5000` |
+| `DATABASE_URL` | PostgreSQL connection string | _(required)_ |
 | `BETTER_AUTH_SECRET` | Better Auth signing secret | _(required)_ |
 | `GOOGLE_CLIENT_ID` | Google OAuth 2.0 client ID | _(required)_ |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth 2.0 client secret | _(required)_ |
-| `NEXT_PUBLIC_API_URL` | API base URL consumed by the Next.js app | `http://localhost:3000` |
+| `NEXT_PUBLIC_APP_URL` | Public URL of the app (used by Better Auth) | `http://localhost:3001` |
+| `FORWARD_TIMEOUT_MS` | Timeout in milliseconds for URL reachability checks | `5000` |
 
-> Create the Google OAuth credentials in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (type: Web application) and set the authorized redirect URI to `<BASE_URL>/api/auth/callback/google`.
+> Create the Google OAuth credentials in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (type: Web application) and set the authorized redirect URI to `<NEXT_PUBLIC_APP_URL>/api/auth/callback/google`.
 
 ### 4. Run database migrations
 
 ```bash
-bun run db:generate
 bun run db:migrate
 ```
 
@@ -92,17 +74,7 @@ bun run db:migrate
 bun run dev
 ```
 
-By default:
-
-- API: `http://localhost:3000`
-- Web: `http://localhost:3001`
-
-You can also run only one app:
-
-```bash
-bun run dev:api
-bun run dev:web
-```
+The app runs at `http://localhost:3001`.
 
 ## Available Scripts
 
@@ -110,13 +82,11 @@ Run all commands from the monorepo root with `bun run <script>`.
 
 | Script | Description |
 |---|---|
-| `dev` | Start all apps in development mode |
-| `dev:api` | Start only the API app |
+| `dev` | Start the web app in development mode |
 | `dev:web` | Start only the web app |
 | `build` | Build all apps and packages |
 | `lint` | Run lint tasks in workspaces |
 | `check` | Run Biome checks in workspaces |
-| `test` | Run test tasks in workspaces |
 | `format` | Format repository files with Biome |
 | `db:generate` | Generate Drizzle migration files |
 | `db:migrate` | Apply pending migrations |
@@ -125,17 +95,16 @@ Run all commands from the monorepo root with `bun run <script>`.
 
 This repository is a Turborepo monorepo:
 
-- `apps/api` - Elysia API (shorten, redirect, auth, admin, OpenAPI)
-- `apps/web` - Next.js frontend (landing page, dashboard, my-links, login)
-- `packages/db` - Shared Drizzle schema, auth schema, and migration scripts
+- `apps/web` - Next.js app: frontend + API Route Handlers (shorten, redirect, auth, admin)
+- `packages/db` - Drizzle migration scripts
 - `packages/biome-config` - Shared Biome configuration
 - `packages/tsconfig` - Shared TypeScript configuration
 
 ## API Overview
 
-Common routes include:
+All API routes are served from the Next.js app (`apps/web`):
 
-- `GET /health` - Health and metadata
+- `GET /api/health` - Health and metadata
 - `POST /api/auth/sign-in/social` - Start Google OAuth sign-in (returns redirect URL)
 - `GET /api/auth/callback/google` - Google OAuth callback (handled by Better Auth)
 - `GET /api/auth/get-session` - Current user session
@@ -149,18 +118,6 @@ Common routes include:
 - `PATCH /api/admin/urls/:id/status` - Activate/deactivate link (authenticated)
 - `DELETE /api/admin/urls/:id` - Soft delete link (authenticated)
 
-## API Documentation
-
-The API is fully documented via auto-generated OpenAPI.
-
-Once the API is running:
-
-```http
-GET /openapi
-```
-
-You can import this spec into tools like [Swagger UI](https://swagger.io/tools/swagger-ui/) or [Scalar](https://scalar.com).
-
 ## Architecture
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for a detailed breakdown of the monorepo layout, tech stack decisions, database schema, API design, authentication flow, and testing strategy.
@@ -168,31 +125,6 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for a detailed breakdown of the monorepo 
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for the full release history.
-
-## Load Testing
-
-A [k6](https://k6.io) script is included to benchmark API latency under load.
-
-### Run the benchmark
-
-Make sure the API server is running:
-
-```bash
-k6 run apps/api/k6/latency.js
-```
-
-Target a different host:
-
-```bash
-k6 run -e BASE_URL=http://your-host:3000 apps/api/k6/latency.js
-```
-
-### Scenario details
-
-- Ramps up to **50 virtual users** over 10 seconds
-- Sustains 50 virtual users for 20 seconds, then ramps down over 10 seconds
-- Each iteration creates a short URL, peeks it, and follows redirect
-- Threshold: p95 response time under **200ms**
 
 ## License
 

@@ -2,17 +2,19 @@
 
 ## 1. Overview
 
-Link Arch is a URL shortening platform where authenticated users create short links with optional custom aliases, set expiry dates, and track click counts in real time. The system validates target URL reachability before storing a link, auto-deactivates expired links on read, and exposes a full OpenAPI spec generated directly from route schemas.
+Link Arch is a URL shortening platform where authenticated users create short links with optional custom aliases, set expiry dates, and track click counts in real time. The system validates target URL reachability before storing a link and auto-deactivates expired links on read.
+
+The frontend and API are colocated in a single Next.js application. Route Handlers serve all API endpoints; there is no separate backend process.
 
 ```
-┌─────────────┐     ┌──────────────────┐     ┌──────────────────────┐     ┌────────────┐
-│   Browser   │────▶│   Next.js 16     │────▶│    Elysia API        │────▶│ PostgreSQL │
-│             │     │   (App Router)   │     │   (Bun runtime)      │     │            │
-└─────────────┘     └──────────────────┘     └──────────────────────┘     └────────────┘
-                            │                          │
-                            │                          ├── Better Auth  (sessions)
-                            └── React Query ───────────┤
-                                (client cache)         └── Drizzle ORM  (queries)
+┌─────────────┐     ┌────────────────────────────────────────┐     ┌────────────┐
+│   Browser   │────▶│   Next.js 16 (App Router)              │────▶│ PostgreSQL │
+│             │     │   Frontend + API Route Handlers         │     │            │
+└─────────────┘     └────────────────────────────────────────┘     └────────────┘
+                              │
+                              ├── Better Auth  (sessions, Google OAuth)
+                              ├── Drizzle ORM  (queries)
+                              └── React Query  (client-side cache)
 ```
 
 ---
@@ -23,27 +25,28 @@ This repository is a [Turborepo](https://turbo.build) monorepo managed with Bun 
 
 | Path | Type | Responsibility |
 |---|---|---|
-| `apps/api` | Application | Elysia HTTP server: shorten, redirect, auth, admin routes |
-| `apps/web` | Application | Next.js 16 frontend: landing page, dashboard, my-links, login |
-| `packages/db` | Shared package | Drizzle schema, auth schema, migration scripts |
+| `apps/web` | Application | Next.js 16: frontend + all API Route Handlers (shorten, redirect, auth, admin) |
+| `packages/db` | Shared package | Drizzle migration scripts and SQL migration files |
 | `packages/biome-config` | Shared config | Biome linter/formatter rules shared across workspaces |
 | `packages/tsconfig` | Shared config | Base TypeScript configuration shared across workspaces |
 | `.claude/` | Tooling | Claude Code agents and skills for AI-assisted development |
-| `.github/workflows/` | CI/CD | GitHub Actions for tests and automated releases |
+| `.github/workflows/` | CI/CD | GitHub Actions for migrations and automated releases |
+
+`apps/web` is self-contained: the database schema (`lib/db/`) and all service logic (`lib/services/`) live inside the app, with no workspace dependencies beyond shared config.
 
 ---
 
 ## 3. Tech stack decisions
 
-**Bun** — used as the JavaScript runtime, package manager, and test runner. Eliminates the TypeScript transpilation step with native `.ts` execution and offers faster cold starts than Node.js. The built-in test runner removes a dev dependency.
+**Bun** — used as the JavaScript runtime and package manager. Eliminates the TypeScript transpilation step with native `.ts` execution and offers faster cold starts than Node.js.
 
-**Elysia** — the API framework. Chosen for end-to-end type safety via the Eden treaty client, built-in OpenAPI 3.0 spec generation from route schemas (no manual spec authoring), and first-class Bun compatibility. Route schema validation is the single source of truth for both runtime enforcement and documentation.
+**Next.js 16 (App Router)** — serves both the React frontend and all API endpoints via Route Handlers. A single Next.js deployment replaces a separate Elysia API server, removing CORS configuration, cross-origin cookie handling, and a second Vercel project. Static pages are pre-rendered; dynamic routes (API, redirect) are server-rendered on demand.
 
-**Better Auth** — handles authentication. Framework-agnostic design allows swapping the database adapter without rewriting auth logic. Authentication is Google OAuth only; account linking is enabled with Google as a trusted provider so a returning user is matched by email. The PostgreSQL adapter integrates directly with the existing Drizzle connection.
+**Better Auth** — handles authentication. Framework-agnostic design allows swapping the database adapter without rewriting auth logic. Authentication is Google OAuth only; account linking is enabled with Google as a trusted provider so a returning user is matched by email. The PostgreSQL adapter integrates directly with the existing Drizzle connection. The auth client (`lib/auth-client.ts`) is used on the frontend to handle CSRF tokens automatically.
 
-**Drizzle ORM** — SQL-first ORM with zero runtime overhead. Schema is plain TypeScript; migrations are plain SQL files checked into `packages/db/drizzle/`. TypeScript types are inferred directly from the schema, eliminating a separate type-generation step.
+**Drizzle ORM** — SQL-first ORM with zero runtime overhead. Schema is plain TypeScript in `apps/web/lib/db/`; migrations are plain SQL files in `packages/db/drizzle/`. TypeScript types are inferred directly from the schema.
 
-**Turborepo** — task orchestrator for the monorepo. Defines a task graph (`turbo.json`) so `build`, `test`, and `lint` run in dependency order with local caching. Parallel pipeline execution reduces CI time when apps have no mutual dependency.
+**Turborepo** — task orchestrator for the monorepo. Defines a task graph (`turbo.json`) so `build` and `lint` run in dependency order with local caching. Environment variables are explicitly declared in `turbo.json` so the Vercel build pipeline exposes them to the Next.js build process.
 
 **Biome** — unified linter and formatter replacing ESLint + Prettier. Single config, faster execution, no plugin conflicts.
 
@@ -74,7 +77,7 @@ Indexes: `urls_user_id_idx`, `urls_user_id_created_at_idx` (dashboard query perf
 
 ### Auth tables (`user`, `session`, `account`, `verification`)
 
-Managed by Better Auth. Schema declared in `packages/db/src/auth-schema.ts` and kept in sync with the Better Auth PostgreSQL adapter contract.
+Managed by Better Auth. Schema declared in `apps/web/lib/db/auth-schema.ts` and kept in sync with the Better Auth PostgreSQL adapter contract.
 
 **Key decisions:**
 
@@ -86,26 +89,25 @@ Managed by Better Auth. Schema declared in `packages/db/src/auth-schema.ts` and 
 
 ## 5. API design
 
-Routes are grouped by concern. All authenticated routes require a valid Better Auth session cookie.
+All routes are Next.js Route Handlers inside `apps/web/app/`. Authenticated routes require a valid Better Auth session cookie.
 
 | Group | Routes | Auth |
 |---|---|---|
-| Health | `GET /health` | Public |
+| Health | `GET /api/health` | Public |
 | Auth | `POST /api/auth/sign-in/social`, `GET /api/auth/callback/google`, `GET /api/auth/get-session`, `POST /api/auth/sign-out` | Public |
 | Shorten | `POST /api/shorten` | Required |
 | Redirect | `GET /:key` | Public |
 | Preview | `GET /:key/peek` | Public |
-| Admin | `GET /api/admin/urls`, `PATCH /api/admin/urls/:id`, `PATCH /api/admin/urls/:id/key`, `PATCH /api/admin/urls/:id/status`, `DELETE /api/admin/urls/:id` | Required |
-| OpenAPI | `GET /openapi` | Public |
+| Admin | `GET /api/admin/urls`, `PATCH /api/admin/urls/[id]`, `PATCH /api/admin/urls/[id]/key`, `PATCH /api/admin/urls/[id]/status`, `DELETE /api/admin/urls/[id]` | Required |
 
-OpenAPI is auto-generated by the `@elysiajs/openapi` plugin from the route `.body`, `.response`, and `.params` schemas defined inline. No separate spec file exists — the running server is the source of truth.
+Static Next.js routes (`/dashboard`, `/login`, `/my-links`, etc.) take routing priority over the dynamic `[key]` catch-all segment.
 
 ---
 
 ## 6. Authentication flow
 
 ```
-Client                       Elysia API            Better Auth          Google
+Client                    Next.js Route Handler     Better Auth          Google
   │                              │                      │                   │
   │─ POST /sign-in/social ──────▶│─ auth.handler ──────▶│                   │
   │  { provider: "google" }      │                      │ build OAuth URL   │
@@ -114,20 +116,20 @@ Client                       Elysia API            Better Auth          Google
   │── window.location = url ──────────────────────────────────────────────▶ │
   │                              │                      │       user consents
   │◀──────── redirect to /api/auth/callback/google?code=… ───────────────────│
-  │─ GET /callback/google ──────▶│─ auth.handler ──────▶│ exchange code,     │
-  │                              │                      │ upsert user+account│
-  │◀── Set-Cookie: session ───────────────────────────────│ + redirect /dashboard
+  │─ GET /callback/google ──────▶│─ auth.handler ──────▶│ exchange code,    │
+  │                              │                      │ upsert user+account
+  │◀── Set-Cookie: session ──────│◀─────────────────────│ redirect /dashboard
   │                              │                      │                   │
-  │── POST /api/shorten ────────▶│─ auth-middleware ───▶│                   │
+  │── POST /api/shorten ────────▶│─ getSession() ──────▶│                   │
   │   (with session cookie)      │◀── { user } ─────────│                   │
   │◀── 201 { shortUrl } ─────────│                      │                   │
 ```
 
-The login button issues `POST /api/auth/sign-in/social` and follows the returned `url` to Google. After consent, Better Auth handles the callback, upserts the `user` and `account` rows, sets the session cookie, and redirects to `/dashboard`.
+The login button calls `POST /api/auth/sign-in/social` and redirects to the returned Google URL. After consent, Better Auth handles the callback, upserts the `user` and `account` rows, sets the session cookie, and redirects to `/dashboard`.
 
-`auth-middleware.ts` calls `auth.api.getSession()` on each protected request. If no valid session is found, it returns `401`. The authenticated user is attached to the Elysia context and passed to route handlers without re-fetching from the database.
+Session validation on protected Route Handlers uses `auth.api.getSession({ headers: request.headers })`. The Next.js middleware (`proxy.ts`) guards `/dashboard` and `/my-links` via the session cookie, and redirects authenticated users away from `/login`.
 
-On the web side, `proxy.ts` (Next.js middleware) guards `/dashboard` and `/my-links` by checking for the session cookie, and redirects authenticated users away from `/login`.
+Sign-out uses the Better Auth client SDK (`authClient.signOut()`) on the frontend to ensure CSRF tokens are handled correctly.
 
 ---
 
@@ -153,17 +155,22 @@ app/
 ├── dashboard/page.tsx    ← Dashboard (protected)
 ├── my-links/page.tsx     ← My Links (protected)
 ├── login/page.tsx        ← Google sign-in
-├── sign-in/page.tsx      ← Redirects to /login
-├── sign-up/page.tsx      ← Redirects to /login
-components/
-├── app-topbar.tsx
-├── app-sidebar.tsx
-├── dashboard-shell.tsx
-├── short-url-result.tsx
-├── edit-url-dialog.tsx
-└── delete-url-action.tsx
+├── [key]/route.ts        ← Short URL redirect (Route Handler)
+├── [key]/peek/route.ts   ← Preview endpoint (Route Handler)
+├── api/                  ← All API Route Handlers
+│   ├── auth/[...all]/    ← Better Auth handler
+│   ├── health/           ← Health endpoint
+│   ├── shorten/          ← URL creation
+│   └── admin/urls/       ← Link administration
+lib/
+├── auth.ts               ← Better Auth server config
+├── auth-client.ts        ← Better Auth browser client (CSRF-aware)
+├── db.ts                 ← Drizzle connection
+├── db/schema.ts          ← urls table + auth table re-exports
+├── db/auth-schema.ts     ← Better Auth PostgreSQL schema
+├── services/             ← url.service.ts, keygen.ts, validator.ts
+└── api.ts                ← Client-side fetch wrappers ("use client")
 hooks/                    ← React Query hooks (Client)
-lib/                      ← Utilities: api.ts, url.ts, activity.ts, expiry.ts
 ```
 
 ---
@@ -172,17 +179,16 @@ lib/                      ← Utilities: api.ts, url.ts, activity.ts, expiry.ts
 
 | Layer | Tool | Location | Scope |
 |---|---|---|---|
-| Unit | Bun test | `apps/api/tests/keygen.test.ts` | Key generation & validation logic |
-| Unit | Bun test | `apps/api/tests/validator.test.ts` | URL reachability checks |
-| Integration | Bun test | `apps/api/tests/peek-route.test.ts` | Peek endpoint with in-process server |
-| E2E (API) | Bun test | `apps/api/tests/peek-route.e2e.test.ts` | Full request cycle against PostgreSQL |
-| Load | k6 | `apps/api/k6/latency.js` | p95 < 200ms at 50 VUs (create + peek + redirect) |
-| CI | GitHub Actions | `.github/workflows/tests.yml` | E2E tests against PostgreSQL 16 service on every PR and push to main |
+| CI | GitHub Actions | `.github/workflows/tests.yml` | Database migrations against PostgreSQL 16 service on every PR and push to main |
+
+Unit and integration tests were part of the removed `apps/api` package. Migrating them to `apps/web` is tracked as a known limitation.
 
 ---
 
 ## 9. Known limitations
 
+- No unit or integration tests for Route Handlers after the Elysia → Next.js migration. The previous test suite lived in `apps/api/tests/` and was removed with the package.
+- No OpenAPI spec. The previous spec was auto-generated by the Elysia plugin; Next.js Route Handlers have no equivalent built-in.
 - No IP-based rate limiting on the shorten or redirect endpoints.
 - Click analytics are a simple counter; there is no time-series aggregation (clicks per day/week).
 - The CSV export button in the My Links UI is wired to the UI layer but the file download is not yet implemented.
