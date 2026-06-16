@@ -2,6 +2,7 @@
 
 import { Link2, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { AuthLegalFooter } from "@/components/auth-legal-footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,11 +27,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 			if (!response.ok) throw new Error("Failed to initiate sign in");
 
 			const data = await response.json();
-			if (data.url) {
-				window.location.href = data.url;
-			}
+			if (!data.url) throw new Error("No redirect URL returned");
+			window.location.href = data.url;
 		} catch {
 			setIsPending(false);
+			toast.error("Could not start Google sign in. Please try again.");
 		}
 	}
 
