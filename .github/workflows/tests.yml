@@ -31,6 +31,8 @@ jobs:
       BASE_URL: http://localhost:3000
       WEB_URL: http://localhost:3001
       FORWARD_TIMEOUT_MS: "5000"
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
     steps:
       - name: Checkout
