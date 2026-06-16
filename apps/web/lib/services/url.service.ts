@@ -1,5 +1,5 @@
 import { urls } from "@/lib/db/schema";
-import { and, desc, eq, isNotNull, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gt, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { generateKey } from "./keygen";
 
@@ -49,10 +49,13 @@ export async function createShortUrl(targetUrl: string, userId: string, customKe
 }
 
 export async function findByKey(key: string) {
-	await deactivateExpiredUrls();
-
 	return db.query.urls.findFirst({
-		where: and(eq(urls.key, key), eq(urls.isDeleted, false)),
+		where: and(
+			eq(urls.key, key),
+			eq(urls.isDeleted, false),
+			eq(urls.isActive, true),
+			or(isNull(urls.expiresAt), gt(urls.expiresAt, new Date())),
+		),
 	});
 }
 
