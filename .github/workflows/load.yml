@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       base_url:
-        description: "Target environment URL (e.g. https://link-arch.vercel.app)"
+        description: "Target environment URL (e.g. https://linkarch.vercel.app)"
         required: true
-        default: "https://link-arch.vercel.app"
+        default: "https://linkarch.vercel.app"
       test_key:
         description: "Existing short key to use for the redirect load test"
         required: false
@@ -29,7 +29,7 @@ jobs:
       - name: Run redirect load test
         run: k6 run tests/load/redirect.js
         env:
-          BASE_URL: ${{ github.event.inputs.base_url || 'https://link-arch.vercel.app' }}
+          BASE_URL: ${{ github.event.inputs.base_url || 'https://linkarch.vercel.app' }}
           TEST_KEY: ${{ github.event.inputs.test_key || 'smoke' }}
 
   stress-shorten:
@@ -46,4 +46,4 @@ jobs:
       - name: Run shorten stress test
         run: k6 run tests/load/shorten.js
         env:
-          BASE_URL: ${{ github.event.inputs.base_url || 'https://link-arch.vercel.app' }}
+          BASE_URL: ${{ github.event.inputs.base_url || 'https://linkarch.vercel.app' }}
