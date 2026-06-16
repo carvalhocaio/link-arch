@@ -12,7 +12,11 @@ export async function GET(
 		if (!url) {
 			return NextResponse.json({ error: "Short URL not found" }, { status: 404 });
 		}
-		after(() => incrementClicks(url.id));
+		try {
+			after(() => incrementClicks(url.id));
+		} catch {
+			void incrementClicks(url.id);
+		}
 		return NextResponse.redirect(url.targetUrl, 302);
 	} catch {
 		return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
