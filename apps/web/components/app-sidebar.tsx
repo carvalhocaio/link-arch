@@ -1,6 +1,7 @@
 "use client";
 
 import { LayoutDashboard, Link2, LinkIcon, Sparkles } from "lucide-react";
+import { APP_VERSION } from "@/lib/version";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -53,6 +54,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 								</div>
 								<div className="grid flex-1 text-left text-sm leading-tight">
 									<span className="truncate font-semibold">LinkArch</span>
+									<span className="truncate text-xs text-muted-foreground">v{APP_VERSION}</span>
 								</div>
 							</Link>
 						</SidebarMenuButton>

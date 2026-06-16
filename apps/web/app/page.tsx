@@ -2,6 +2,7 @@ import { ArrowRight, BarChart2, Clock, Link2, Zap } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { APP_VERSION } from "@/lib/version";
 
 const features = [
 	{
@@ -67,6 +68,8 @@ export default function LandingPage() {
 			</main>
 
 			<footer className="relative py-6 text-center text-xs text-muted-foreground">
+				<span>v{APP_VERSION}</span>
+				<span className="mx-2">·</span>
 				<Link href="/privacy" className="underline-offset-4 hover:text-primary hover:underline">
 					Privacy
 				</Link>
