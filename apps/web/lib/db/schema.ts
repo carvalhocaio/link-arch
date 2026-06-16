@@ -1,4 +1,5 @@
-import { boolean, index, integer, pgTable, serial, sql, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { boolean, index, integer, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 import { user } from "./auth-schema";
 
