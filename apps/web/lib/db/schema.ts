@@ -1,4 +1,4 @@
-import { boolean, index, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, index, integer, pgTable, serial, sql, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 import { user } from "./auth-schema";
 
@@ -11,7 +11,7 @@ export const urls = pgTable(
 		userId: text("user_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		key: text("key").notNull().unique(),
+		key: text("key").notNull(),
 		targetUrl: text("target_url").notNull(),
 		isActive: boolean("is_active").notNull().default(true),
 		isDeleted: boolean("is_deleted").notNull().default(false),
@@ -23,5 +23,6 @@ export const urls = pgTable(
 	(table) => ({
 		userIdIdx: index("urls_user_id_idx").on(table.userId),
 		userCreatedAtIdx: index("urls_user_id_created_at_idx").on(table.userId, table.createdAt),
+		keyActiveUniqueIdx: uniqueIndex("urls_key_active_unique").on(table.key).where(sql`${table.isDeleted} = false`),
 	}),
 );

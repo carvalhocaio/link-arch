@@ -188,5 +188,5 @@ function isUrlKeyUniqueViolation(error: unknown): boolean {
 	const constraint =
 		"constraint" in error ? String((error as { constraint?: unknown }).constraint) : "";
 
-	return code === "23505" && (constraint === "" || constraint === "urls_key_unique");
+	return code === "23505" && (constraint === "" || constraint === "urls_key_active_unique");
 }
