@@ -37,7 +37,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
 	return (
 		<div className={cn("flex flex-col gap-4", className)} {...props}>
-			<Card className="surface-floating ghost-border gap-0 bg-card/95 py-0 shadow-[var(--air-shadow)]">
+			<Card className="surface-floating ghost-border gap-0 bg-card/95 py-0 shadow-(--air-shadow)">
 				<CardHeader className="space-y-2 border-b border-border/40 py-6">
 					<div className="flex items-center gap-2 text-primary">
 						<Link2 className="size-4" aria-hidden="true" />
