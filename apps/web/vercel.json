@@ -1,3 +1,4 @@
 {
-  "installCommand": "bun install"
+  "installCommand": "cd ../.. && bun install",
+  "buildCommand": "cd ../../packages/db && bun run src/migrate.ts && cd ../apps/web && bun run build"
 }
