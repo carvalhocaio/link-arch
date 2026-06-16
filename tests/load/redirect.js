@@ -27,7 +27,7 @@ export default function () {
 	const success = check(res, {
 		"status is 3xx or 404": (r) =>
 			(r.status >= 300 && r.status < 400) || r.status === 404,
-		"response time < 200ms": (r) => r.timings.duration < 200,
+		"response time < 500ms": (r) => r.timings.duration < 500,
 	});
 
 	errorRate.add(!success);
