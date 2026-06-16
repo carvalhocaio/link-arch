@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
-
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
 	const [isPending, setIsPending] = useState(false);
 
@@ -17,10 +15,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 		setIsPending(true);
 		try {
 			const callbackURL = `${window.location.origin}/dashboard`;
-			const response = await fetch(`${API_URL}/api/auth/sign-in/social`, {
+			const response = await fetch("/api/auth/sign-in/social", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				credentials: "include",
 				body: JSON.stringify({ provider: "google", callbackURL }),
 			});
 

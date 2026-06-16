@@ -10,7 +10,11 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@link-arch/db": "workspace:*",
 		"@tanstack/react-query": "^5.90.3",
+		"better-auth": "^1.5.5",
+		"drizzle-orm": "^0.38.0",
+		"postgres": "^3.4.5",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",

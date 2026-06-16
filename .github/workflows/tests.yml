@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  test:
+  migrate:
     runs-on: ubuntu-latest
 
     services:
@@ -27,12 +27,6 @@ jobs:
 
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/link_arch
-      BETTER_AUTH_SECRET: test-secret-for-ci
-      BASE_URL: http://localhost:3000
-      WEB_URL: http://localhost:3001
-      FORWARD_TIMEOUT_MS: "5000"
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
     steps:
       - name: Checkout
@@ -49,7 +43,3 @@ jobs:
       - name: Run migrations
         working-directory: packages/db
         run: bun run src/migrate.ts
-
-      - name: Run API tests
-        working-directory: apps/api
-        run: bun test

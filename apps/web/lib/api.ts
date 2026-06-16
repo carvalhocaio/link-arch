@@ -1,5 +1,3 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
-
 export interface ShortenResponse {
 	shortUrl: string;
 	key: string;
@@ -54,10 +52,9 @@ export interface ShortenPayload {
 }
 
 export async function shortenUrl(payload: ShortenPayload): Promise<ShortenResponse> {
-	const response = await fetch(`${API_URL}/api/shorten`, {
+	const response = await fetch("/api/shorten", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		credentials: "include",
 		body: JSON.stringify(payload),
 	});
 
@@ -70,9 +67,7 @@ export async function shortenUrl(payload: ShortenPayload): Promise<ShortenRespon
 }
 
 export async function peekUrl(key: string): Promise<PeekResponse> {
-	const response = await fetch(`${API_URL}/${key}/peek`, {
-		credentials: "include",
-	});
+	const response = await fetch(`/${key}/peek`);
 
 	if (!response.ok) {
 		const error: ShortenErrorResponse = await response.json();
@@ -83,9 +78,7 @@ export async function peekUrl(key: string): Promise<PeekResponse> {
 }
 
 export async function getMyUrls(): Promise<AdminUrl[]> {
-	const response = await fetch(`${API_URL}/api/admin/urls`, {
-		credentials: "include",
-	});
+	const response = await fetch("/api/admin/urls");
 
 	if (!response.ok) {
 		throw new Error("Failed to load user URLs");
@@ -95,10 +88,9 @@ export async function getMyUrls(): Promise<AdminUrl[]> {
 }
 
 export async function updateMyUrl(payload: UpdateMyUrlPayload): Promise<AdminUrl> {
-	const response = await fetch(`${API_URL}/api/admin/urls/${payload.id}`, {
+	const response = await fetch(`/api/admin/urls/${payload.id}`, {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
-		credentials: "include",
 		body: JSON.stringify({ url: payload.url, expiresAt: payload.expiresAt }),
 	});
 
@@ -111,10 +103,9 @@ export async function updateMyUrl(payload: UpdateMyUrlPayload): Promise<AdminUrl
 }
 
 export async function updateMyUrlStatus(payload: UpdateMyUrlStatusPayload): Promise<AdminUrl> {
-	const response = await fetch(`${API_URL}/api/admin/urls/${payload.id}/status`, {
+	const response = await fetch(`/api/admin/urls/${payload.id}/status`, {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
-		credentials: "include",
 		body: JSON.stringify({ isActive: payload.isActive }),
 	});
 
@@ -127,10 +118,9 @@ export async function updateMyUrlStatus(payload: UpdateMyUrlStatusPayload): Prom
 }
 
 export async function updateMyUrlKey(payload: UpdateMyUrlKeyPayload): Promise<AdminUrl> {
-	const response = await fetch(`${API_URL}/api/admin/urls/${payload.id}/key`, {
+	const response = await fetch(`/api/admin/urls/${payload.id}/key`, {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
-		credentials: "include",
 		body: JSON.stringify({ key: payload.key }),
 	});
 
@@ -145,9 +135,8 @@ export async function updateMyUrlKey(payload: UpdateMyUrlKeyPayload): Promise<Ad
 export async function deleteMyUrl(
 	payload: DeleteMyUrlPayload,
 ): Promise<{ deleted: { id: number; key: string } }> {
-	const response = await fetch(`${API_URL}/api/admin/urls/${payload.id}`, {
+	const response = await fetch(`/api/admin/urls/${payload.id}`, {
 		method: "DELETE",
-		credentials: "include",
 	});
 
 	if (!response.ok) {
@@ -180,9 +169,7 @@ export interface SessionResponse {
 }
 
 export async function getSession(): Promise<SessionResponse> {
-	const response = await fetch(`${API_URL}/api/auth/get-session`, {
-		credentials: "include",
-	});
+	const response = await fetch("/api/auth/get-session");
 
 	if (!response.ok) {
 		throw new Error("Not authenticated");
@@ -192,9 +179,8 @@ export async function getSession(): Promise<SessionResponse> {
 }
 
 export async function signOut(): Promise<void> {
-	const response = await fetch(`${API_URL}/api/auth/sign-out`, {
+	const response = await fetch("/api/auth/sign-out", {
 		method: "POST",
-		credentials: "include",
 	});
 
 	if (!response.ok) {

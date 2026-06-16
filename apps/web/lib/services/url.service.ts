@@ -1,6 +1,6 @@
 import { urls } from "@link-arch/db/schema";
 import { and, desc, eq, isNotNull, lte, sql } from "drizzle-orm";
-import { db } from "../lib/db";
+import { db } from "@/lib/db";
 import { generateKey } from "./keygen";
 
 const RANDOM_KEY_MAX_ATTEMPTS = 5;
