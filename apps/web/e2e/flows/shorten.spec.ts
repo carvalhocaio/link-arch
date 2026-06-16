@@ -12,8 +12,9 @@ test("home page has a URL input or sign-in prompt", async ({ page }) => {
 authTest(
 	"short link redirect works end-to-end",
 	async ({ authenticatedPage: page }) => {
+		// Use the local health endpoint so isUrlReachable never hits the internet
 		const res = await page.request.post("/api/shorten", {
-			data: { url: "https://example.com" },
+			data: { url: "http://localhost:3001/api/health" },
 			headers: { "Content-Type": "application/json" },
 		});
 		expect(res.ok()).toBe(true);
