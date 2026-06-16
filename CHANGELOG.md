@@ -38,3 +38,7 @@ Follows [Keep a Changelog](https://keepachangelog.com/) and [Semantic Versioning
 - Auto-generated OpenAPI 3.0 documentation served at `GET /openapi`
 - k6 load test script targeting p95 latency under 200ms at 50 virtual users
 - GitHub Actions CI pipeline running integration tests against a PostgreSQL 16 service
+
+[Unreleased]: https://github.com/carvalhocaio/link-arch/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/carvalhocaio/link-arch/compare/v1.0.0...v2.0.0
+[1.0.0]: https://github.com/carvalhocaio/link-arch/releases/tag/v1.0.0
