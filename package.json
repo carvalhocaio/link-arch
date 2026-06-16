@@ -12,6 +12,13 @@
     "lint": "turbo run lint",
     "check": "turbo run check",
     "test": "turbo run test",
+    "test:unit": "cd apps/web && bun test __tests__/unit",
+    "test:local": "bash scripts/test-local.sh",
+    "test:local:unit": "bash scripts/test-local.sh unit",
+    "test:local:integration": "bash scripts/test-local.sh integration",
+    "test:local:functional": "bash scripts/test-local.sh functional",
+    "test:db:up": "docker compose -f docker-compose.test.yml up -d",
+    "test:db:down": "docker compose -f docker-compose.test.yml down --remove-orphans",
     "format": "biome format --write .",
     "db:generate": "turbo run db:generate --filter=@link-arch/db",
     "db:migrate": "turbo run db:migrate --filter=@link-arch/db"

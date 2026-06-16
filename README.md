@@ -118,6 +118,47 @@ All API routes are served from the Next.js app (`apps/web`):
 - `PATCH /api/admin/urls/:id/status` - Activate/deactivate link (authenticated)
 - `DELETE /api/admin/urls/:id` - Soft delete link (authenticated)
 
+## Tests
+
+The project has a full test pyramid using Bun's built-in test runner, Playwright for E2E, and k6 for load testing.
+
+### Run locally (requires Docker)
+
+```bash
+cp .env.test.example .env.test   # first time only
+bun run test:local               # unit + integration + functional (Docker DB)
+bun run test:local unit          # unit only (no DB)
+bun run test:local integration   # integration only
+bun run test:local functional    # functional only
+```
+
+### Run specific layers manually
+
+```bash
+cd apps/web
+bun test __tests__/unit          # unit (no DB required)
+bun test __tests__/integration   # requires DATABASE_URL
+bun test __tests__/functional    # requires DATABASE_URL + BETTER_AUTH_SECRET
+bun run test:e2e                 # Playwright (requires app at localhost:3001)
+```
+
+### Load and stress tests (requires k6)
+
+```bash
+k6 run tests/load/redirect.js -e BASE_URL=http://localhost:3001 -e TEST_KEY=yourkey
+k6 run tests/load/shorten.js  -e BASE_URL=http://localhost:3001
+```
+
+| Layer | Tool | Tests | What it covers |
+|---|---|---|---|
+| Unit | `bun test` | 42 | Pure functions: keygen, validator, expiry, metrics |
+| Integration | `bun test` | 25 | All `url.service` operations against a real DB |
+| Functional | `bun test` | 31 | API Route Handlers, auth guards, IDOR protection |
+| E2E / A11y | Playwright + axe-core | — | User flows across 4 browsers, WCAG 2.1 AA |
+| Load / Stress | k6 | — | Redirect (200 VUs) and shorten (1000 VU spike) |
+
+CI runs unit, integration, and functional tests on every PR and push to main. E2E runs in a separate Playwright workflow. Load tests run on-demand (`workflow_dispatch`) or on a Sunday 03:00 UTC schedule.
+
 ## Architecture
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for a detailed breakdown of the monorepo layout, tech stack decisions, database schema, API design, authentication flow, and testing strategy.

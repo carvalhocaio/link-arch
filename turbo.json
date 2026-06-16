@@ -25,7 +25,13 @@
 		},
 		"test": {
 			"dependsOn": ["^build"],
-			"cache": false
+			"cache": false,
+			"env": [
+				"DATABASE_URL",
+				"NEXT_PUBLIC_APP_URL",
+				"BETTER_AUTH_SECRET",
+				"FORWARD_TIMEOUT_MS"
+			]
 		},
 		"db:generate": {
 			"cache": false

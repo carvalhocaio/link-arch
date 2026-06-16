@@ -6,6 +6,35 @@ Follows [Keep a Changelog](https://keepachangelog.com/) and [Semantic Versioning
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-06-16
+
+### Added
+
+- **Test infrastructure** — full pyramid from unit to system, all verified locally and in CI:
+  - Unit tests (`bun test`) for `keygen`, `validator`, `expiry`, and `dashboard-metrics` — 42 tests, no external dependencies.
+  - Integration tests for every `url.service` function (createShortUrl, findByKey, incrementClicks, softDelete, updateKey, expiry deactivation) against a real PostgreSQL database — 25 tests, IDOR guards included.
+  - Functional tests for all API route handlers by importing them directly and mocking `@/lib/auth` per test — 31 tests covering auth (401 on all protected routes), shorten, redirect, and admin CRUD.
+  - E2E tests via Playwright across Chromium, Firefox, WebKit, and mobile Chrome: auth redirect flows, home page rendering, and WCAG 2.1 AA accessibility checks via `@axe-core/playwright`.
+  - Smoke tests asserting `GET /api/health` and the home page after every deploy.
+  - k6 load test script for the redirect endpoint (ramp to 200 VUs, p95 < 500ms threshold) and k6 stress test script for the shorten endpoint (spike to 1000 VUs).
+- `docker-compose.test.yml` — isolated `postgres:16-alpine` container for local test runs.
+- `scripts/test-local.sh` — orchestrates Docker lifecycle, migrations, and all test layers; supports `unit | integration | functional | all` argument; always stops the container via `trap EXIT`.
+- `.env.test.example` — documented template for the local test environment.
+- `apps/web/tsconfig.test.json` — TypeScript config extending the app config with `bun-types` for IDE support in test files.
+
+### Changed
+
+- CI (`tests.yml`) expanded from a single migration job to three parallel jobs: `unit` (no DB), `integration` (Postgres service container), and `functional` (Postgres service container + auth mock).
+- New `e2e.yml` workflow runs Playwright tests on every PR and push to main; uploads a test report artifact on failure.
+- New `load.yml` workflow runs k6 load and stress tests on `workflow_dispatch` (with configurable `base_url` and `test_key` inputs) and on a weekly Sunday 03:00 UTC schedule.
+- `turbo.json` `test` task now declares `DATABASE_URL`, `NEXT_PUBLIC_APP_URL`, `BETTER_AUTH_SECRET`, and `FORWARD_TIMEOUT_MS` in `env` so Turborepo passes them to child processes.
+- `.gitignore` updated to exclude `.env.test`.
+
+### Dependencies
+
+- Added `@playwright/test@^1.61.0` and `@axe-core/playwright@^4.11.3` as dev dependencies in `apps/web`.
+- Added `bun-types@^1.3.14` as dev dependency in `apps/web`.
+
 ## [2.0.1] - 2026-06-16
 
 ### Fixed
@@ -52,7 +81,8 @@ Follows [Keep a Changelog](https://keepachangelog.com/) and [Semantic Versioning
 - k6 load test script targeting p95 latency under 200ms at 50 virtual users
 - GitHub Actions CI pipeline running integration tests against a PostgreSQL 16 service
 
-[Unreleased]: https://github.com/carvalhocaio/link-arch/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/carvalhocaio/link-arch/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/carvalhocaio/link-arch/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/carvalhocaio/link-arch/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/carvalhocaio/link-arch/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/carvalhocaio/link-arch/releases/tag/v1.0.0
