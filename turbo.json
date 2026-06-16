@@ -3,7 +3,15 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": ["dist/**", ".next/**"]
+			"outputs": ["dist/**", ".next/**"],
+			"env": [
+				"DATABASE_URL",
+				"BETTER_AUTH_SECRET",
+				"GOOGLE_CLIENT_ID",
+				"GOOGLE_CLIENT_SECRET",
+				"FORWARD_TIMEOUT_MS",
+				"NEXT_PUBLIC_APP_URL"
+			]
 		},
 		"dev": {
 			"cache": false,
