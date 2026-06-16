@@ -4,7 +4,7 @@ Link Arch is a fast, lightweight link management platform built with Bun, Elysia
 
 ## Features
 
-- Authenticated link management with email/password authentication (Better Auth)
+- Authenticated link management with Google sign-in (Better Auth OAuth)
 - Create short URLs with custom keys or generated aliases
 - URL reachability validation before creating or updating links
 - Link administration: update destination, update key, toggle active status, set expiry date, and soft delete
@@ -73,7 +73,11 @@ Set values in `.env`:
 | `WEB_URL` | Allowed web origin for CORS and trusted auth origins | `http://localhost:3001` |
 | `FORWARD_TIMEOUT_MS` | Timeout in milliseconds for URL reachability checks | `5000` |
 | `BETTER_AUTH_SECRET` | Better Auth signing secret | _(required)_ |
+| `GOOGLE_CLIENT_ID` | Google OAuth 2.0 client ID | _(required)_ |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth 2.0 client secret | _(required)_ |
 | `NEXT_PUBLIC_API_URL` | API base URL consumed by the Next.js app | `http://localhost:3000` |
+
+> Create the Google OAuth credentials in the [Google Cloud Console](https://console.cloud.google.com/apis/credentials) (type: Web application) and set the authorized redirect URI to `<BASE_URL>/api/auth/callback/google`.
 
 ### 4. Run database migrations
 
@@ -122,7 +126,7 @@ Run all commands from the monorepo root with `bun run <script>`.
 This repository is a Turborepo monorepo:
 
 - `apps/api` - Elysia API (shorten, redirect, auth, admin, OpenAPI)
-- `apps/web` - Next.js frontend (dashboard, my-links, auth pages)
+- `apps/web` - Next.js frontend (landing page, dashboard, my-links, login)
 - `packages/db` - Shared Drizzle schema, auth schema, and migration scripts
 - `packages/biome-config` - Shared Biome configuration
 - `packages/tsconfig` - Shared TypeScript configuration
@@ -132,8 +136,10 @@ This repository is a Turborepo monorepo:
 Common routes include:
 
 - `GET /health` - Health and metadata
-- `POST /api/auth/sign-up` - Create account
-- `POST /api/auth/sign-in` - Sign in
+- `POST /api/auth/sign-in/social` - Start Google OAuth sign-in (returns redirect URL)
+- `GET /api/auth/callback/google` - Google OAuth callback (handled by Better Auth)
+- `GET /api/auth/get-session` - Current user session
+- `POST /api/auth/sign-out` - End session
 - `POST /api/shorten` - Create short URL (authenticated)
 - `GET /:key` - Redirect to target URL
 - `GET /:key/peek` - Preview URL metadata without redirect
