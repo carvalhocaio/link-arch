@@ -181,6 +181,7 @@ export async function getSession(): Promise<SessionResponse> {
 export async function signOut(): Promise<void> {
 	const response = await fetch("/api/auth/sign-out", {
 		method: "POST",
+		headers: { "Content-Type": "application/json" },
 	});
 
 	if (!response.ok) {
