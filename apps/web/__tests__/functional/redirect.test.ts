@@ -62,7 +62,7 @@ describe("GET /:key (redirect)", () => {
 			"https://example.com",
 			"2000-01-01",
 		);
-		// deactivateExpiredUrls runs inside findByKey, so the expired URL becomes inactive
+		// expired URLs are filtered inline in findByKey (expiresAt check in WHERE clause)
 		const res = await GET(redirectRequest("inactive"), makeParams("inactive"));
 		expect(res.status).toBe(404);
 	});

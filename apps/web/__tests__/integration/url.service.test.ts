@@ -1,4 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
+import { eq } from "drizzle-orm";
+import { db } from "../../lib/db";
+import { urls } from "../../lib/db/schema";
 import {
 	TEST_USER_ID,
 	TEST_USER_ID_2,
@@ -86,14 +89,13 @@ describe("findByKey", () => {
 		expect(found).toBeUndefined();
 	});
 
-	it("returns inactive URLs (caller decides whether to redirect)", async () => {
+	it("returns undefined for an inactive URL", async () => {
 		await createShortUrl("https://example.com", TEST_USER_ID, "inactive");
 		const url = await findByKey("inactive");
 		if (!url) throw new Error("URL not found");
 		await updateUrlStatusByIdAndUserId(url.id, TEST_USER_ID, false);
 		const found = await findByKey("inactive");
-		expect(found).toBeDefined();
-		expect(found?.isActive).toBe(false);
+		expect(found).toBeUndefined();
 	});
 });
 
@@ -320,7 +322,7 @@ describe("deactivateExpiredUrls", () => {
 			"2000-01-01",
 		);
 		await deactivateExpiredUrls();
-		const found = await findByKey("expired");
+		const found = await db.query.urls.findFirst({ where: eq(urls.key, "expired") });
 		expect(found?.isActive).toBe(false);
 	});
 
