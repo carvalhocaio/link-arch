@@ -1,7 +1,7 @@
 "use client";
 
-import { Link2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Link2, Loader2 } from "lucide-react";
+import { useState } from "react";
 import { AuthLegalFooter } from "@/components/auth-legal-footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,20 +10,36 @@ import { cn } from "@/lib/utils";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
-	const [origin, setOrigin] = useState("");
+	const [isPending, setIsPending] = useState(false);
 
-	useEffect(() => {
-		setOrigin(window.location.origin);
-	}, []);
+	async function handleGoogleSignIn() {
+		setIsPending(true);
+		try {
+			const callbackURL = `${window.location.origin}/dashboard`;
+			const response = await fetch(`${API_URL}/api/auth/sign-in/social`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ provider: "google", callbackURL }),
+			});
 
-	const googleAuthUrl = `${API_URL}/api/auth/sign-in/social?provider=google&callbackURL=${origin}/dashboard`;
+			if (!response.ok) throw new Error("Failed to initiate sign in");
+
+			const data = await response.json();
+			if (data.url) {
+				window.location.href = data.url;
+			}
+		} catch {
+			setIsPending(false);
+		}
+	}
 
 	return (
 		<div className={cn("flex flex-col gap-4", className)} {...props}>
 			<Card className="surface-floating ghost-border gap-0 bg-card/95 py-0 shadow-[var(--air-shadow)]">
 				<CardHeader className="space-y-2 border-b border-border/40 py-6">
 					<div className="flex items-center gap-2 text-primary">
-						<Link2 className="size-4" />
+						<Link2 className="size-4" aria-hidden="true" />
 						<span className="text-sm font-semibold">LinkArch</span>
 					</div>
 					<CardTitle className="text-2xl tracking-tight">Welcome</CardTitle>
@@ -31,12 +47,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 				</CardHeader>
 				<CardContent className="py-6">
 					<Button
-						asChild
 						variant="outline"
 						className="ghost-border h-10 w-full bg-card"
-						disabled={!origin}
+						onClick={handleGoogleSignIn}
+						disabled={isPending}
 					>
-						<a href={googleAuthUrl}>
+						{isPending ? (
+							<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+						) : (
 							<svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
 								<path
 									d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -55,8 +73,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 									fill="#EA4335"
 								/>
 							</svg>
-							Continue with Google
-						</a>
+						)}
+						{isPending ? "Redirecting..." : "Continue with Google"}
 					</Button>
 				</CardContent>
 			</Card>
