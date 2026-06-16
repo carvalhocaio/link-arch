@@ -1,4 +1,4 @@
-import { urls } from "@link-arch/db/schema";
+import { urls } from "@/lib/db/schema";
 import { and, desc, eq, isNotNull, lte, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { generateKey } from "./keygen";

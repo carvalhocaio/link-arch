@@ -10,7 +10,6 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@link-arch/db": "workspace:*",
 		"@tanstack/react-query": "^5.90.3",
 		"better-auth": "^1.5.5",
 		"drizzle-orm": "^0.38.0",
