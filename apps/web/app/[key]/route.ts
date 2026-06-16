@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { NextResponse } from "next/server";
 import { findByKey, incrementClicks } from "@/lib/services/url.service";
 
@@ -11,7 +12,7 @@ export async function GET(
 		if (!url) {
 			return NextResponse.json({ error: "Short URL not found" }, { status: 404 });
 		}
-		await incrementClicks(url.id);
+		after(() => incrementClicks(url.id));
 		return NextResponse.redirect(url.targetUrl, 302);
 	} catch {
 		return NextResponse.json({ error: "Service unavailable" }, { status: 503 });
