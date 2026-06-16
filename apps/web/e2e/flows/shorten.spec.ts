@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { test as authTest } from "../fixtures";
 
 test("home page has a URL input or sign-in prompt", async ({ page }) => {
 	await page.goto("/");
@@ -8,6 +9,17 @@ test("home page has a URL input or sign-in prompt", async ({ page }) => {
 	expect(hasInput + hasSignIn).toBeGreaterThan(0);
 });
 
-test("short link redirect works end-to-end", async ({ request, page }) => {
-	test.skip(!!process.env.CI, "Requires an authenticated session to create links");
-});
+authTest(
+	"short link redirect works end-to-end",
+	async ({ authenticatedPage: page }) => {
+		const res = await page.request.post("/api/shorten", {
+			data: { url: "https://example.com" },
+			headers: { "Content-Type": "application/json" },
+		});
+		expect(res.ok()).toBe(true);
+		const { key } = await res.json();
+
+		const redirect = await page.request.get(`/${key}`, { maxRedirects: 0 });
+		expect([301, 302, 307, 308]).toContain(redirect.status());
+	},
+);

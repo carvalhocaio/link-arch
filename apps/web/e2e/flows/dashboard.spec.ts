@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { test as authTest } from "../fixtures";
 
 test("unauthenticated visit to /dashboard redirects to /login", async ({
 	page,
@@ -7,8 +8,10 @@ test("unauthenticated visit to /dashboard redirects to /login", async ({
 	await expect(page).toHaveURL(/\/login/);
 });
 
-test("dashboard is accessible with a valid session", async ({ page }) => {
-	test.skip(!!process.env.CI, "Requires a seeded test session in CI");
-	await page.goto("/dashboard");
-	await expect(page).toHaveURL(/\/dashboard/);
-});
+authTest(
+	"dashboard is accessible with a valid session",
+	async ({ authenticatedPage: page }) => {
+		await page.goto("/dashboard");
+		await expect(page).toHaveURL(/\/dashboard/);
+	},
+);

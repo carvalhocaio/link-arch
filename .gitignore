@@ -28,6 +28,9 @@ bun.lock
 
 # Test
 coverage/
+apps/web/e2e/.auth-state.json
+apps/web/playwright-report/
+apps/web/test-results/
 
 # Agents Skills
 .agents/
