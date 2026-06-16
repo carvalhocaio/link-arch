@@ -1,10 +1,4 @@
-import { AuthPageLayout } from "@/components/auth-page-layout";
-import { LoginForm } from "@/components/login-form";
-
+import { redirect } from "next/navigation";
 export default function SignInPage() {
-	return (
-		<AuthPageLayout>
-			<LoginForm />
-		</AuthPageLayout>
-	);
+	redirect("/login");
 }

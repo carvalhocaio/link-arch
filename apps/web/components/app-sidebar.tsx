@@ -31,7 +31,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 	}> = [
 		{
 			label: "Dashboard",
-			href: "/",
+			href: "/dashboard",
 			icon: LayoutDashboard,
 		},
 		{
@@ -47,7 +47,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
-							<Link href="/">
+							<Link href="/dashboard">
 								<div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-[0_8px_22px_rgb(39_108_0_/_18%)]">
 									<Link2 className="size-4" />
 								</div>

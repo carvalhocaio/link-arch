@@ -45,7 +45,7 @@ export function NavUser({
 	function handleSignOut() {
 		signOut.mutate(undefined, {
 			onSuccess: () => {
-				router.push("/sign-in");
+				router.push("/login");
 			},
 			onError: () => {
 				toast.error("Failed to sign out");

@@ -16,7 +16,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 		setOrigin(window.location.origin);
 	}, []);
 
-	const googleAuthUrl = `${API_URL}/api/auth/sign-in/social?provider=google&callbackURL=${origin}/`;
+	const googleAuthUrl = `${API_URL}/api/auth/sign-in/social?provider=google&callbackURL=${origin}/dashboard`;
 
 	return (
 		<div className={cn("flex flex-col gap-4", className)} {...props}>
