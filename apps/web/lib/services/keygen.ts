@@ -3,7 +3,25 @@ const KEY_LENGTH = 7;
 const CUSTOM_KEY_PATTERN = /^[a-z0-9-]+$/;
 const CUSTOM_KEY_MIN_LENGTH = 3;
 const CUSTOM_KEY_MAX_LENGTH = 32;
-const RESERVED_CUSTOM_KEYS = new Set(["api", "health", "openapi"]);
+/**
+ * Static routes always win over the dynamic `[key]` route, so a key matching one
+ * of these would be accepted and then silently never resolve. Keep in sync with
+ * the top-level route segments in `app/`.
+ */
+const RESERVED_CUSTOM_KEYS = new Set([
+	"api",
+	"health",
+	"openapi",
+	"login",
+	"sign-in",
+	"sign-up",
+	"dashboard",
+	"my-links",
+	"privacy",
+	"terms",
+	"robots.txt",
+	"sitemap.xml",
+]);
 
 function randomString(length: number): string {
 	const bytes = crypto.getRandomValues(new Uint8Array(length));

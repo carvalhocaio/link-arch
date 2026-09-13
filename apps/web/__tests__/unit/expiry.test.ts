@@ -1,8 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	formatExpiryInBrowserTimezone,
-	toDateInputValueFromUtc,
-} from "../../lib/expiry";
+import { formatExpiryInBrowserTimezone, toDateInputValueFromUtc } from "../../lib/expiry";
 
 describe("toDateInputValueFromUtc", () => {
 	it("returns empty string for null", () => {
@@ -22,15 +19,11 @@ describe("toDateInputValueFromUtc", () => {
 	});
 
 	it("formats a valid ISO date string as YYYY-MM-DD using UTC", () => {
-		expect(toDateInputValueFromUtc("2025-06-15T23:59:59.000Z")).toBe(
-			"2025-06-15",
-		);
+		expect(toDateInputValueFromUtc("2025-06-15T23:59:59.000Z")).toBe("2025-06-15");
 	});
 
 	it("pads single-digit month and day with zeros", () => {
-		expect(toDateInputValueFromUtc("2025-01-05T00:00:00.000Z")).toBe(
-			"2025-01-05",
-		);
+		expect(toDateInputValueFromUtc("2025-01-05T00:00:00.000Z")).toBe("2025-01-05");
 	});
 });
 

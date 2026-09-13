@@ -10,15 +10,7 @@ mock.module("@/lib/auth", () => ({
 
 const { POST: postShorten } = await import("../../app/api/shorten/route");
 const { GET: getAdminUrls } = await import("../../app/api/admin/urls/route");
-const { PATCH: patchUrl, DELETE: deleteUrl } = await import(
-	"../../app/api/admin/urls/[id]/route"
-);
-const { PATCH: patchStatus } = await import(
-	"../../app/api/admin/urls/[id]/status/route"
-);
-const { PATCH: patchKey } = await import(
-	"../../app/api/admin/urls/[id]/key/route"
-);
+const { PATCH: patchUrl, DELETE: deleteUrl } = await import("../../app/api/admin/urls/[id]/route");
 
 function makeParams(id: string) {
 	return { params: Promise.resolve({ id }) };
@@ -59,23 +51,18 @@ describe("Unauthenticated requests return 401", () => {
 		expect(res.status).toBe(401);
 	});
 
-	it("PATCH /api/admin/urls/:id/status", async () => {
-		const req = new Request("http://localhost/api/admin/urls/1/status", {
-			method: "PATCH",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ isActive: false }),
-		});
-		const res = await patchStatus(req, makeParams("1"));
-		expect(res.status).toBe(401);
-	});
+	// The key rename and status toggle used to be separate endpoints; they are now
+	// fields on the consolidated PATCH, so the case above covers them.
 
-	it("PATCH /api/admin/urls/:id/key", async () => {
-		const req = new Request("http://localhost/api/admin/urls/1/key", {
+	it("PATCH /api/admin/urls/:id rejects before parsing an invalid body", async () => {
+		const req = new Request("http://localhost/api/admin/urls/abc", {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ key: "new-key" }),
+			body: JSON.stringify({ isActive: "not-a-boolean" }),
 		});
-		const res = await patchKey(req, makeParams("1"));
+		const res = await patchUrl(req, makeParams("abc"));
+		// 401 rather than 400: the session check must run before id and body validation,
+		// so an anonymous caller cannot probe the validation rules.
 		expect(res.status).toBe(401);
 	});
 });

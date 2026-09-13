@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
-import { join } from "path";
 import { webcrypto } from "node:crypto";
+import { join } from "path";
 
 export const E2E_USER_ID = "e2e-playwright-user-001";
 export const E2E_SESSION_TOKEN = "e2e-playwright-session-token-fixed-abc123";
@@ -24,8 +24,7 @@ async function signCookieValue(value: string, secret: string): Promise<string> {
 
 export default async function globalSetup() {
 	const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-	const secret =
-		process.env.BETTER_AUTH_SECRET ?? "ci-test-secret-not-used-in-prod";
+	const secret = process.env.BETTER_AUTH_SECRET ?? "ci-test-secret-not-used-in-prod";
 
 	if (process.env.DATABASE_URL) {
 		const { default: postgres } = await import("postgres");

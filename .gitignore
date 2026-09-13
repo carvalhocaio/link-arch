@@ -36,3 +36,6 @@ apps/web/test-results/
 .agents/
 skills-lock.json
 .vercel
+
+# Scratch
+PR_BODY.md

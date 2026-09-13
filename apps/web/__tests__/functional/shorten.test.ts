@@ -1,18 +1,5 @@
-import {
-	afterAll,
-	afterEach,
-	beforeAll,
-	describe,
-	expect,
-	it,
-	mock,
-} from "bun:test";
-import {
-	TEST_USER_ID,
-	cleanupUrls,
-	setupTestDb,
-	teardownTestDb,
-} from "../helpers/db";
+import { afterAll, afterEach, beforeAll, describe, expect, it, mock } from "bun:test";
+import { TEST_USER_ID, cleanupUrls, setupTestDb, teardownTestDb } from "../helpers/db";
 
 const authState: { session: object | null } = { session: null };
 
@@ -67,9 +54,7 @@ describe("POST /api/shorten", () => {
 
 	it("uses a custom key when provided", async () => {
 		authState.session = mockSession;
-		const res = await POST(
-			shortenRequest({ url: "https://example.com", key: "my-custom" }),
-		);
+		const res = await POST(shortenRequest({ url: "https://example.com", key: "my-custom" }));
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body.key).toBe("my-custom");
@@ -77,18 +62,14 @@ describe("POST /api/shorten", () => {
 
 	it("returns 400 for a reserved custom key", async () => {
 		authState.session = mockSession;
-		const res = await POST(
-			shortenRequest({ url: "https://example.com", key: "api" }),
-		);
+		const res = await POST(shortenRequest({ url: "https://example.com", key: "api" }));
 		expect(res.status).toBe(400);
 	});
 
 	it("normalizes uppercase key to lowercase and accepts it", async () => {
 		authState.session = mockSession;
 		// normalizeCustomKey("MyLink") → "mylink", which is valid
-		const res = await POST(
-			shortenRequest({ url: "https://example.com", key: "MyLink" }),
-		);
+		const res = await POST(shortenRequest({ url: "https://example.com", key: "MyLink" }));
 		expect(res.status).toBe(200);
 		const body = await res.json();
 		expect(body.key).toBe("mylink");
@@ -96,26 +77,20 @@ describe("POST /api/shorten", () => {
 
 	it("returns 400 for an invalid custom key (special characters)", async () => {
 		authState.session = mockSession;
-		const res = await POST(
-			shortenRequest({ url: "https://example.com", key: "my_link!" }),
-		);
+		const res = await POST(shortenRequest({ url: "https://example.com", key: "my_link!" }));
 		expect(res.status).toBe(400);
 	});
 
 	it("returns 400 for an invalid custom key (too short)", async () => {
 		authState.session = mockSession;
-		const res = await POST(
-			shortenRequest({ url: "https://example.com", key: "ab" }),
-		);
+		const res = await POST(shortenRequest({ url: "https://example.com", key: "ab" }));
 		expect(res.status).toBe(400);
 	});
 
 	it("returns 409 when the custom key already exists", async () => {
 		authState.session = mockSession;
 		await POST(shortenRequest({ url: "https://example.com", key: "taken" }));
-		const res = await POST(
-			shortenRequest({ url: "https://other.com", key: "taken" }),
-		);
+		const res = await POST(shortenRequest({ url: "https://other.com", key: "taken" }));
 		expect(res.status).toBe(409);
 	});
 
@@ -125,9 +100,7 @@ describe("POST /api/shorten", () => {
 			isUrlReachable: () => Promise.resolve(false),
 		}));
 		try {
-			const res = await POST(
-				shortenRequest({ url: "https://unreachable.invalid" }),
-			);
+			const res = await POST(shortenRequest({ url: "https://unreachable.invalid" }));
 			expect(res.status).toBe(400);
 		} finally {
 			mock.module("@/lib/services/validator", () => ({

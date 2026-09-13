@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { APP_VERSION } from "@/lib/version";
+import { NextResponse } from "next/server";
 
 export function GET() {
 	return NextResponse.json({

@@ -8,7 +8,6 @@ export function useShortenUrl() {
 		mutationFn: (payload: ShortenPayload) => shortenUrl(payload),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ["my-urls"] });
-			await queryClient.refetchQueries({ queryKey: ["my-urls"], type: "active" });
 		},
 	});
 }

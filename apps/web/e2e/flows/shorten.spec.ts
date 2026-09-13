@@ -9,18 +9,15 @@ test("home page has a URL input or sign-in prompt", async ({ page }) => {
 	expect(hasInput + hasSignIn).toBeGreaterThan(0);
 });
 
-authTest(
-	"short link redirect works end-to-end",
-	async ({ authenticatedPage: page }) => {
-		// Use the local health endpoint so isUrlReachable never hits the internet
-		const res = await page.request.post("/api/shorten", {
-			data: { url: "http://localhost:3001/api/health" },
-			headers: { "Content-Type": "application/json" },
-		});
-		expect(res.ok()).toBe(true);
-		const { key } = await res.json();
+authTest("short link redirect works end-to-end", async ({ authenticatedPage: page }) => {
+	// Use the local health endpoint so isUrlReachable never hits the internet
+	const res = await page.request.post("/api/shorten", {
+		data: { url: "http://localhost:3001/api/health" },
+		headers: { "Content-Type": "application/json" },
+	});
+	expect(res.ok()).toBe(true);
+	const { key } = await res.json();
 
-		const redirect = await page.request.get(`/${key}`, { maxRedirects: 0 });
-		expect([301, 302, 307, 308]).toContain(redirect.status());
-	},
-);
+	const redirect = await page.request.get(`/${key}`, { maxRedirects: 0 });
+	expect([301, 302, 307, 308]).toContain(redirect.status());
+});

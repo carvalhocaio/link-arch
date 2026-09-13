@@ -45,10 +45,7 @@ describe("buildQuickStats", () => {
 	});
 
 	it("shows scheduled for expiry count in active links detail", () => {
-		const urls = [
-			makeUrl({ expiresAt: "2099-01-01T00:00:00.000Z" }),
-			makeUrl({ expiresAt: null }),
-		];
+		const urls = [makeUrl({ expiresAt: "2099-01-01T00:00:00.000Z" }), makeUrl({ expiresAt: null })];
 		const stats = buildQuickStats(urls);
 		const active = stats.find((s) => s.title === "Active Links");
 		expect(active?.detail).toContain("1");
@@ -61,10 +58,7 @@ describe("buildQuickStats", () => {
 	});
 
 	it("shows the key with most clicks as top performing", () => {
-		const urls = [
-			makeUrl({ key: "low", clicks: 5 }),
-			makeUrl({ key: "high", clicks: 100 }),
-		];
+		const urls = [makeUrl({ key: "low", clicks: 5 }), makeUrl({ key: "high", clicks: 100 })];
 		const stats = buildQuickStats(urls);
 		const top = stats.find((s) => s.title === "Top Performing");
 		expect(top?.value).toBe("/high");
@@ -78,9 +72,7 @@ describe("buildQuickStats", () => {
 
 	it("shows +100% when previous month had 0 clicks and current has some", () => {
 		const now = new Date();
-		const thisMonth = new Date(
-			Date.UTC(now.getFullYear(), now.getMonth(), 15),
-		).toISOString();
+		const thisMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 15)).toISOString();
 		const urls = [makeUrl({ clicks: 10, createdAt: thisMonth })];
 		const stats = buildQuickStats(urls, now);
 		const total = stats.find((s) => s.title === "Total Clicks");

@@ -1,6 +1,6 @@
+import { db } from "@/lib/db";
 import { urls } from "@/lib/db/schema";
 import { and, desc, eq, gt, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
-import { db } from "@/lib/db";
 import { generateKey } from "./keygen";
 
 const RANDOM_KEY_MAX_ATTEMPTS = 5;
@@ -103,56 +103,30 @@ export async function softDeleteUrlByIdAndUserId(id: number, userId: string) {
 	return updated;
 }
 
-export async function deactivateUrl(id: number) {
-	const [updated] = await db
-		.update(urls)
-		.set({ isActive: false, updatedAt: new Date() })
-		.where(eq(urls.id, id))
-		.returning();
-	return updated;
+export interface UrlPatch {
+	targetUrl?: string;
+	expiresAt?: string | null;
+	key?: string;
+	isActive?: boolean;
 }
 
-export async function deactivateUrlByIdAndUserId(id: number, userId: string) {
-	const [updated] = await db
-		.update(urls)
-		.set({ isActive: false, updatedAt: new Date() })
-		.where(and(eq(urls.id, id), eq(urls.userId, userId), eq(urls.isDeleted, false)))
-		.returning();
-	return updated;
-}
+/**
+ * Applies every changed field of a link in a single UPDATE. The edit dialog can
+ * change the destination, the expiry, the key and the active flag at once, and
+ * issuing one statement keeps that a single round-trip instead of three.
+ */
+export async function patchUrlByIdAndUserId(id: number, userId: string, patch: UrlPatch) {
+	const values: Record<string, unknown> = { updatedAt: new Date() };
 
-export async function updateUrlStatusByIdAndUserId(id: number, userId: string, isActive: boolean) {
-	const [updated] = await db
-		.update(urls)
-		.set({ isActive, updatedAt: new Date() })
-		.where(and(eq(urls.id, id), eq(urls.userId, userId), eq(urls.isDeleted, false)))
-		.returning();
+	if (patch.targetUrl !== undefined) values.targetUrl = patch.targetUrl;
+	if (patch.expiresAt !== undefined) values.expiresAt = parseExpiryDate(patch.expiresAt);
+	if (patch.key !== undefined) values.key = patch.key;
+	if (patch.isActive !== undefined) values.isActive = patch.isActive;
 
-	return updated;
-}
-
-export async function updateUrlByIdAndUserId(
-	id: number,
-	userId: string,
-	targetUrl: string,
-	expiresAt: string | null,
-) {
-	const parsedExpiresAt = parseExpiryDate(expiresAt);
-
-	const [updated] = await db
-		.update(urls)
-		.set({ targetUrl, expiresAt: parsedExpiresAt, updatedAt: new Date() })
-		.where(and(eq(urls.id, id), eq(urls.userId, userId), eq(urls.isDeleted, false)))
-		.returning();
-
-	return updated;
-}
-
-export async function updateUrlKeyByIdAndUserId(id: number, userId: string, key: string) {
 	try {
 		const [updated] = await db
 			.update(urls)
-			.set({ key, updatedAt: new Date() })
+			.set(values)
 			.where(and(eq(urls.id, id), eq(urls.userId, userId), eq(urls.isDeleted, false)))
 			.returning();
 
