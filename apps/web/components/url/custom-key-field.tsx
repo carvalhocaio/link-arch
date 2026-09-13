@@ -62,7 +62,9 @@ export function CustomKeyField({
 						className="shrink-0"
 					>
 						<RefreshCw className="size-3" aria-hidden="true" />
-						<span className="hidden sm:inline">Regenerate</span>
+						{/* sr-only rather than hidden: below sm the label is the button's only
+						    accessible name, and `hidden` would remove it from the a11y tree. */}
+						<span className="sr-only sm:not-sr-only">Regenerate</span>
 					</Button>
 				) : null}
 			</div>
