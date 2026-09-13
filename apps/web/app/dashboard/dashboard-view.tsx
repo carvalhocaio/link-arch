@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { DashboardShell } from "@/components/dashboard-shell";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -149,14 +149,15 @@ export function DashboardView() {
 				<section className="space-y-3">
 					<div className="flex items-center justify-between gap-3">
 						<h2 className="text-sm font-semibold tracking-tight">Recent activity</h2>
-						<Button
-							variant="link"
-							className="h-auto p-0 text-[11px] font-semibold"
-							nativeButton={false}
-							render={<Link href="/my-links" />}
+						<Link
+							href="/my-links"
+							className={cn(
+								buttonVariants({ variant: "link" }),
+								"h-auto p-0 text-[11px] font-semibold",
+							)}
 						>
 							View all links
-						</Button>
+						</Link>
 					</div>
 
 					{isError ? (

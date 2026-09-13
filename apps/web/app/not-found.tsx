@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export const metadata: Metadata = {
 	title: "Not found",
@@ -18,9 +18,9 @@ export default function NotFound() {
 			<p className="max-w-sm text-xs text-muted-foreground">
 				The short link you followed is inactive, expired, or was never created.
 			</p>
-			<Button nativeButton={false} render={<Link href="/" />}>
+			<Link href="/" className={buttonVariants()}>
 				Back to home
-			</Button>
+			</Link>
 		</main>
 	);
 }

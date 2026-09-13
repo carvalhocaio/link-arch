@@ -2,11 +2,13 @@ import { ArrowRight, BarChart2, Clock, Link2, Zap } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { APP_VERSION } from "@/lib/version";
 
 export const metadata: Metadata = {
-	title: "Short links that work as hard as you do",
+	// `title.template` from the root layout does not apply to the root page — a
+	// template only reaches child segments — so the brand is spelled out here.
+	title: { absolute: "LinkArch — Short links that work as hard as you do" },
 	description:
 		"LinkArch turns long URLs into clean, trackable short links — custom aliases, click analytics, and expiry controls built in.",
 };
@@ -39,9 +41,9 @@ export default function LandingPage() {
 					</span>
 					<span className="text-xs font-semibold tracking-tight">LinkArch</span>
 				</div>
-				<Button variant="outline" nativeButton={false} render={<Link href="/login" />}>
+				<Link href="/login" className={buttonVariants({ variant: "outline" })}>
 					Sign in
-				</Button>
+				</Link>
 			</header>
 
 			<main
@@ -62,10 +64,10 @@ export default function LandingPage() {
 					aliases, click analytics, and expiry controls built in.
 				</p>
 				<div className="mt-8">
-					<Button size="lg" nativeButton={false} render={<Link href="/login" />}>
+					<Link href="/login" className={buttonVariants({ size: "lg" })}>
 						Get started
 						<ArrowRight className="size-4" aria-hidden="true" />
-					</Button>
+					</Link>
 				</div>
 
 				<section aria-labelledby="features-heading" className="mt-20 border-t border-border">
