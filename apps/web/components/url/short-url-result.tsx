@@ -5,7 +5,6 @@ import { useId } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 interface ShortUrlResultProps {
 	shortUrl: string;
@@ -23,7 +22,7 @@ export function ShortUrlResult({ shortUrl, copied, onCopy }: ShortUrlResultProps
 			</label>
 			<Input id={inputId} readOnly value={shortUrl} className="bg-card" />
 			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-				<Button variant="outline" onClick={onCopy} className="cursor-pointer">
+				<Button variant="outline" onClick={onCopy}>
 					{copied ? (
 						<Check className="size-4" aria-hidden="true" />
 					) : (
@@ -35,7 +34,7 @@ export function ShortUrlResult({ shortUrl, copied, onCopy }: ShortUrlResultProps
 					href={shortUrl}
 					target="_blank"
 					rel="noopener noreferrer"
-					className={cn(buttonVariants({ variant: "outline" }), "cursor-pointer")}
+					className={buttonVariants({ variant: "outline" })}
 				>
 					Open
 					<ExternalLink className="size-4" aria-hidden="true" />

@@ -23,14 +23,16 @@ export function ShortenLinkForm({ form, stacked = false }: ShortenLinkFormProps)
 				event.preventDefault();
 				form.submit();
 			}}
-			className={stacked ? "space-y-4" : "flex flex-col gap-4 md:flex-row md:items-end"}
+			className="space-y-4"
 		>
-			<div className={stacked ? "space-y-4" : "flex-1 space-y-4"}>
-				<div className="space-y-1.5">
-					<label htmlFor={urlId} className="block text-[11px] font-medium">
-						Destination URL
-					</label>
-					<div className="flex h-9 items-center border border-input bg-card px-2.5 focus-within:border-ring">
+			<div className="space-y-1.5">
+				<label htmlFor={urlId} className="block text-[11px] font-medium">
+					Destination URL
+				</label>
+				{/* The submit sits on the URL row so it reads as the action on that field,
+				    rather than floating beside the key field's helper text. */}
+				<div className={stacked ? "space-y-2" : "flex gap-2"}>
+					<div className="flex h-9 flex-1 items-center border border-input bg-card px-2.5 focus-within:border-ring">
 						<Link2 className="mr-2 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
 						<input
 							id={urlId}
@@ -45,34 +47,33 @@ export function ShortenLinkForm({ form, stacked = false }: ShortenLinkFormProps)
 							className="w-full min-w-0 border-none bg-transparent text-xs outline-none placeholder:text-muted-foreground"
 						/>
 					</div>
-					{form.urlError ? (
-						<p id={urlMessageId} role="alert" className="text-[11px] text-destructive">
-							{form.urlError}
-						</p>
-					) : null}
+					<Button
+						type="submit"
+						disabled={!form.canSubmit}
+						className={stacked ? "h-9 w-full" : "h-9 shrink-0"}
+					>
+						{form.isShortening ? "Shortening..." : "Shorten Link"}
+						{form.isShortening ? (
+							<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+						) : (
+							<Zap className="size-4" aria-hidden="true" />
+						)}
+					</Button>
 				</div>
-
-				<CustomKeyField
-					value={form.customKey}
-					onChange={form.onCustomKeyChange}
-					error={form.customKeyError}
-					disabled={form.isShortening}
-					onRegenerate={form.regenerateCustomKey}
-				/>
+				{form.urlError ? (
+					<p id={urlMessageId} role="alert" className="text-[11px] text-destructive">
+						{form.urlError}
+					</p>
+				) : null}
 			</div>
 
-			<Button
-				type="submit"
-				disabled={!form.canSubmit}
-				className={`${stacked ? "w-full" : "md:w-auto"} shrink-0 cursor-pointer disabled:cursor-not-allowed`}
-			>
-				{form.isShortening ? "Shortening..." : "Shorten Link"}
-				{form.isShortening ? (
-					<Loader2 className="size-4 animate-spin" aria-hidden="true" />
-				) : (
-					<Zap className="size-4" aria-hidden="true" />
-				)}
-			</Button>
+			<CustomKeyField
+				value={form.customKey}
+				onChange={form.onCustomKeyChange}
+				error={form.customKeyError}
+				disabled={form.isShortening}
+				onRegenerate={form.regenerateCustomKey}
+			/>
 		</form>
 	);
 }

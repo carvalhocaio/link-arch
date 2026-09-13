@@ -196,7 +196,7 @@ export function EditUrlDialog({
 						</Popover>
 					</div>
 
-					<Button onClick={onSave} disabled={isPending} className="w-full cursor-pointer">
+					<Button onClick={onSave} disabled={isPending} className="w-full">
 						{isPending ? "Saving..." : "Save changes"}
 						{isPending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
 					</Button>

@@ -25,7 +25,7 @@ export function DeleteUrlAction({ onConfirm, isPending, ariaLabel }: DeleteUrlAc
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger
-				render={<Button variant="ghost" size="icon-sm" className="cursor-pointer" />}
+				render={<Button variant="ghost" size="icon-sm" />}
 				aria-label={ariaLabel}
 			>
 				<Trash2 className="size-4" aria-hidden="true" />

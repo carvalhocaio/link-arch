@@ -146,4 +146,21 @@
 		@apply bg-background text-foreground antialiased;
 		min-height: 100vh;
 	}
+
+	/* Browsers give <button> a default arrow cursor, so every control needs this
+	   opt-in. Declared once here rather than as a cursor-pointer class on each
+	   call site, which is how the app ended up with it on six controls and
+	   missing on the rest. Anchors already get it from the UA stylesheet. */
+	button:not(:disabled),
+	summary,
+	label[for],
+	[role="button"]:not([aria-disabled="true"]),
+	[role="menuitem"]:not([aria-disabled="true"]),
+	[role="menuitemradio"]:not([aria-disabled="true"]),
+	[role="menuitemcheckbox"]:not([aria-disabled="true"]),
+	[role="option"]:not([aria-disabled="true"]),
+	[role="switch"]:not([aria-disabled="true"]),
+	[role="tab"]:not([aria-disabled="true"]) {
+		cursor: pointer;
+	}
 }
