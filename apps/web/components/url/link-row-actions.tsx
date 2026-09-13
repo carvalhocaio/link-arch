@@ -28,7 +28,6 @@ export function LinkRowActions({
 				variant="ghost"
 				size="icon-sm"
 				aria-label={`Copy ${activity.slug}`}
-				className="cursor-pointer"
 				onClick={() => onCopy(activity)}
 			>
 				<Copy className="size-4" aria-hidden="true" />
@@ -37,7 +36,6 @@ export function LinkRowActions({
 				variant="ghost"
 				size="icon-sm"
 				aria-label={`Edit ${activity.slug}`}
-				className="cursor-pointer"
 				onClick={() => onEdit(activity)}
 			>
 				<Edit3 className="size-4" aria-hidden="true" />

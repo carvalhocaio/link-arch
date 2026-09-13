@@ -4,10 +4,11 @@ import { ChevronsUpDown, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
@@ -36,11 +37,22 @@ export function NavUser({
 	user: {
 		name: string;
 		email: string;
+		image?: string | null;
 	};
 }) {
 	const router = useRouter();
 	const { isMobile } = useSidebar();
 	const signOut = useSignOut();
+
+	const initials = getInitials(user.name);
+
+	// The provider avatar (Google) is decorative here: the name sits right beside it.
+	const avatar = (
+		<Avatar className="size-8">
+			{user.image ? <AvatarImage src={user.image} alt="" referrerPolicy="no-referrer" /> : null}
+			<AvatarFallback>{initials}</AvatarFallback>
+		</Avatar>
+	);
 
 	function handleSignOut() {
 		signOut.mutate(undefined, {
@@ -65,9 +77,7 @@ export function NavUser({
 							/>
 						}
 					>
-						<Avatar className="size-8">
-							<AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-						</Avatar>
+						{avatar}
 						<div className="grid flex-1 text-left text-xs leading-tight">
 							<span className="truncate font-medium">{user.name}</span>
 							<span className="truncate text-muted-foreground">{user.email}</span>
@@ -75,27 +85,29 @@ export function NavUser({
 						<ChevronsUpDown className="ml-auto size-4" aria-hidden="true" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
-						className="w-(--anchor-width) min-w-56"
+						className="min-w-56"
 						side={isMobile ? "bottom" : "right"}
 						align="end"
 						sideOffset={4}
 					>
-						<DropdownMenuLabel className="p-0 font-normal">
-							<div className="flex items-center gap-2 px-1 py-1.5 text-left">
-								<Avatar className="size-8">
-									<AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-								</Avatar>
-								<div className="grid flex-1 text-left text-xs leading-tight">
-									<span className="truncate font-medium">{user.name}</span>
-									<span className="truncate text-muted-foreground">{user.email}</span>
+						{/* Base UI throws if a GroupLabel has no Group ancestor, unlike Radix.
+						    Grouping also makes the label genuinely name what it sits above. */}
+						<DropdownMenuGroup>
+							<DropdownMenuLabel className="p-0 font-normal">
+								<div className="flex items-center gap-2 px-1 py-1.5 text-left">
+									{avatar}
+									<div className="grid flex-1 text-left text-xs leading-tight">
+										<span className="truncate font-medium">{user.name}</span>
+										<span className="truncate text-muted-foreground">{user.email}</span>
+									</div>
 								</div>
-							</div>
-						</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
-							<LogOut aria-hidden="true" />
-							Sign out
-						</DropdownMenuItem>
+							</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem onClick={handleSignOut}>
+								<LogOut aria-hidden="true" />
+								Sign out
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</SidebarMenuItem>
