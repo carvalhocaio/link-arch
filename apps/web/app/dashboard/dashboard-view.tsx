@@ -26,6 +26,7 @@ import { type ActivityItem, toActivityItems, toShortUrl } from "@/lib/activity";
 import { copyToClipboard } from "@/lib/clipboard";
 import { buildQuickStats } from "@/lib/dashboard-metrics";
 import { formatExpiryInBrowserTimezone } from "@/lib/expiry";
+import { cn } from "@/lib/utils";
 
 const STAT_ICON = {
 	positive: MousePointer2,
