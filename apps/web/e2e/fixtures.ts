@@ -1,5 +1,5 @@
-import { test as base, type Page } from "@playwright/test";
 import { join } from "path";
+import { type Page, test as base } from "@playwright/test";
 
 const AUTH_STATE = join(process.cwd(), "e2e/.auth-state.json");
 

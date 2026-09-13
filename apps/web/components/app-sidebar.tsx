@@ -1,7 +1,7 @@
 "use client";
 
-import { LayoutDashboard, Link2, LinkIcon, Sparkles } from "lucide-react";
 import { APP_VERSION } from "@/lib/version";
+import { LayoutDashboard, Link2, LinkIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -43,20 +43,18 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 	] as const;
 
 	return (
-		<Sidebar variant="inset" collapsible="icon" className="surface-section" {...props}>
+		<Sidebar variant="inset" collapsible="icon" {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton size="lg" asChild>
-							<Link href="/dashboard">
-								<div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-[0_8px_22px_rgb(39_108_0_/_18%)]">
-									<Link2 className="size-4" />
-								</div>
-								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-semibold">LinkArch</span>
-									<span className="truncate text-xs text-muted-foreground">v{APP_VERSION}</span>
-								</div>
-							</Link>
+						<SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
+							<div className="flex aspect-square size-8 items-center justify-center bg-primary text-primary-foreground">
+								<Link2 className="size-4" aria-hidden="true" />
+							</div>
+							<div className="grid flex-1 text-left leading-tight">
+								<span className="truncate font-semibold">LinkArch</span>
+								<span className="truncate text-muted-foreground">v{APP_VERSION}</span>
+							</div>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
@@ -68,29 +66,17 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 						<SidebarMenu>
 							{items.map((item) => (
 								<SidebarMenuItem key={item.label}>
-									<SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.label}>
-										<Link href={item.href}>
-											<item.icon />
-											<span>{item.label}</span>
-										</Link>
+									<SidebarMenuButton
+										isActive={pathname === item.href}
+										tooltip={item.label}
+										render={<Link href={item.href} />}
+									>
+										<item.icon aria-hidden="true" />
+										<span>{item.label}</span>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							))}
 						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
-
-				<SidebarGroup className="mt-auto">
-					<SidebarGroupContent>
-						<div className="surface-floating ghost-border rounded-md p-3 group-data-[collapsible=icon]:hidden">
-							<div className="mb-1 flex items-center gap-2 text-xs font-medium">
-								<Sparkles className="size-3.5 text-primary" />
-								Bulk Management
-							</div>
-							<p className="text-[11px] leading-relaxed text-muted-foreground">
-								Update destination URLs and tags in one action.
-							</p>
-						</div>
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarContent>

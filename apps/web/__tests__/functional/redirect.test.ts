@@ -1,19 +1,6 @@
-import {
-	afterAll,
-	afterEach,
-	beforeAll,
-	describe,
-	expect,
-	it,
-	mock,
-} from "bun:test";
-import {
-	TEST_USER_ID,
-	cleanupUrls,
-	setupTestDb,
-	teardownTestDb,
-} from "../helpers/db";
-import { createShortUrl, updateUrlByIdAndUserId } from "../../lib/services/url.service";
+import { afterAll, afterEach, beforeAll, describe, expect, it, mock } from "bun:test";
+import { createShortUrl, patchUrlByIdAndUserId } from "../../lib/services/url.service";
+import { TEST_USER_ID, cleanupUrls, setupTestDb, teardownTestDb } from "../helpers/db";
 
 mock.module("@/lib/auth", () => ({
 	auth: { api: { getSession: () => Promise.resolve(null) } },
@@ -43,25 +30,13 @@ describe("GET /:key (redirect)", () => {
 	});
 
 	it("returns 404 for a non-existent key", async () => {
-		const res = await GET(
-			redirectRequest("nonexistent"),
-			makeParams("nonexistent"),
-		);
+		const res = await GET(redirectRequest("nonexistent"), makeParams("nonexistent"));
 		expect(res.status).toBe(404);
 	});
 
 	it("returns 404 for an inactive URL", async () => {
-		const created = await createShortUrl(
-			"https://example.com",
-			TEST_USER_ID,
-			"inactive",
-		);
-		await updateUrlByIdAndUserId(
-			created.id,
-			TEST_USER_ID,
-			"https://example.com",
-			"2000-01-01",
-		);
+		const created = await createShortUrl("https://example.com", TEST_USER_ID, "inactive");
+		await patchUrlByIdAndUserId(created.id, TEST_USER_ID, { expiresAt: "2000-01-01" });
 		// expired URLs are filtered inline in findByKey (expiresAt check in WHERE clause)
 		const res = await GET(redirectRequest("inactive"), makeParams("inactive"));
 		expect(res.status).toBe(404);

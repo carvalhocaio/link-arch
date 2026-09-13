@@ -1,39 +1,45 @@
 "use client";
 
 import { Check, Copy, ExternalLink } from "lucide-react";
+import { useId } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface ShortUrlResultProps {
 	shortUrl: string;
 	copied: boolean;
 	onCopy: () => void;
-	actionsClassName?: string;
-	inputClassName?: string;
 }
 
-export function ShortUrlResult({
-	shortUrl,
-	copied,
-	onCopy,
-	actionsClassName = "grid grid-cols-2 gap-2",
-	inputClassName = "ghost-border h-10 bg-card font-mono text-xs",
-}: ShortUrlResultProps) {
+export function ShortUrlResult({ shortUrl, copied, onCopy }: ShortUrlResultProps) {
+	const inputId = useId();
+
 	return (
 		<div className="space-y-3">
-			<Input readOnly value={shortUrl} className={inputClassName} />
-			<div className={actionsClassName}>
+			<label htmlFor={inputId} className="block text-[11px] font-medium">
+				Your short URL
+			</label>
+			<Input id={inputId} readOnly value={shortUrl} className="bg-card" />
+			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
 				<Button variant="outline" onClick={onCopy} className="cursor-pointer">
-					{copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+					{copied ? (
+						<Check className="size-4" aria-hidden="true" />
+					) : (
+						<Copy className="size-4" aria-hidden="true" />
+					)}
 					{copied ? "Copied" : "Copy"}
 				</Button>
-				<Button variant="outline" asChild className="cursor-pointer">
-					<a href={shortUrl} target="_blank" rel="noopener noreferrer">
-						Open
-						<ExternalLink className="size-4" />
-					</a>
-				</Button>
+				<a
+					href={shortUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					className={cn(buttonVariants({ variant: "outline" }), "cursor-pointer")}
+				>
+					Open
+					<ExternalLink className="size-4" aria-hidden="true" />
+				</a>
 			</div>
 		</div>
 	);

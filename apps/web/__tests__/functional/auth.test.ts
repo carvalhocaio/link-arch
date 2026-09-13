@@ -10,15 +10,9 @@ mock.module("@/lib/auth", () => ({
 
 const { POST: postShorten } = await import("../../app/api/shorten/route");
 const { GET: getAdminUrls } = await import("../../app/api/admin/urls/route");
-const { PATCH: patchUrl, DELETE: deleteUrl } = await import(
-	"../../app/api/admin/urls/[id]/route"
-);
-const { PATCH: patchStatus } = await import(
-	"../../app/api/admin/urls/[id]/status/route"
-);
-const { PATCH: patchKey } = await import(
-	"../../app/api/admin/urls/[id]/key/route"
-);
+const { PATCH: patchUrl, DELETE: deleteUrl } = await import("../../app/api/admin/urls/[id]/route");
+const { PATCH: patchStatus } = await import("../../app/api/admin/urls/[id]/status/route");
+const { PATCH: patchKey } = await import("../../app/api/admin/urls/[id]/key/route");
 
 function makeParams(id: string) {
 	return { params: Promise.resolve({ id }) };

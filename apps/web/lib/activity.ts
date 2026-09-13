@@ -1,4 +1,5 @@
 import type { AdminUrl } from "@/lib/api";
+import { SITE_URL } from "@/lib/site";
 
 export interface ActivityItem {
 	id: number;
@@ -26,9 +27,20 @@ export function toActivityItems(urls: AdminUrl[]): ActivityItem[] {
 	});
 }
 
+function baseUrl() {
+	return typeof window !== "undefined" ? window.location.origin : SITE_URL;
+}
+
 export function toShortUrl(key: string) {
-	const baseUrl = typeof window !== "undefined" ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
-	return `${baseUrl}/${key}`;
+	return `${baseUrl()}/${key}`;
+}
+
+/**
+ * Host shown next to a short key in the UI. Derived from the same origin as
+ * `toShortUrl` so the displayed host and the copied link never disagree.
+ */
+export function shortHost() {
+	return stripProtocol(baseUrl());
 }
 
 function safeParseUrl(value: string): URL | null {

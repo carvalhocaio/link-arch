@@ -1,10 +1,8 @@
-"use client";
-
 import Link from "next/link";
 
 export function AuthLegalFooter() {
 	return (
-		<div className="text-center text-xs text-muted-foreground">
+		<div className="text-center text-[11px] text-muted-foreground">
 			<p>
 				&copy; {new Date().getFullYear()} Link Arch. Built by{" "}
 				<a

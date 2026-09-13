@@ -1,12 +1,11 @@
 "use client";
 
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { X } from "lucide-react";
+import { Calendar as CalendarIcon, Loader2, X } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useId } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
 	Dialog,
 	DialogContent,
@@ -17,7 +16,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
+import { CustomKeyField } from "@/components/url/custom-key-field";
 import { cn } from "@/lib/utils";
+
+// react-day-picker + date-fns are only needed once the expiry popover opens, so
+// keep them out of the initial bundle for both dashboard routes.
+const Calendar = dynamic(() => import("@/components/ui/calendar").then((m) => m.Calendar), {
+	ssr: false,
+	loading: () => <div className="size-64 animate-pulse bg-muted" />,
+});
+
+const PRESETS = [
+	{ label: "Today", offsetDays: 0 },
+	{ label: "Tomorrow", offsetDays: 1 },
+	{ label: "In a week", offsetDays: 7 },
+	{ label: "In 2 weeks", offsetDays: 14 },
+] as const;
 
 interface EditUrlDialogProps {
 	open: boolean;
@@ -50,16 +64,13 @@ export function EditUrlDialog({
 	onSave,
 	isPending,
 }: EditUrlDialogProps) {
+	const urlId = useId();
+	const activeLabelId = useId();
+
 	const selectedExpiryDate = parseDateInput(expiresOn);
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
 	const disabledDays = isPending ? true : [{ before: today }];
-	const presets = [
-		{ label: "Today", offsetDays: 0 },
-		{ label: "Tomorrow", offsetDays: 1 },
-		{ label: "In a week", offsetDays: 7 },
-		{ label: "In 2 weeks", offsetDays: 14 },
-	] as const;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,71 +79,74 @@ export function EditUrlDialog({
 					<DialogTitle>Edit short link</DialogTitle>
 					<DialogDescription>Update destination, key, status, and expiry.</DialogDescription>
 				</DialogHeader>
+
 				<div className="space-y-3">
-					<Input
-						type="url"
-						value={url}
-						onChange={(event) => onUrlChange(event.target.value)}
-						placeholder="https://example.com/path"
-						disabled={isPending}
-						className="ghost-border h-10 bg-card text-xs"
-					/>
-					<div className="space-y-1">
-						<div className="ghost-border flex h-10 items-center rounded-md bg-card px-3 focus-within:border-primary">
-							<span className="pr-2 text-xs font-semibold tracking-wide text-muted-foreground">
-								l.arch/
-							</span>
-							<input
-								type="text"
-								value={urlKey}
-								onChange={(event) => onUrlKeyChange(event.target.value)}
-								placeholder="custom-key"
-								disabled={isPending}
-								className="w-full border-none bg-transparent text-xs font-medium outline-none placeholder:text-muted-foreground"
-							/>
-						</div>
-						{urlKeyError ? (
-							<p className="text-xs text-destructive">{urlKeyError}</p>
-						) : (
-							<p className="text-xs text-muted-foreground">
-								Allowed: 3-32 chars, lowercase letters, numbers, and hyphens.
-							</p>
-						)}
+					<div className="space-y-1.5">
+						<label htmlFor={urlId} className="block text-[11px] font-medium">
+							Destination URL
+						</label>
+						<Input
+							id={urlId}
+							type="url"
+							value={url}
+							onChange={(event) => onUrlChange(event.target.value)}
+							placeholder="https://example.com/path"
+							disabled={isPending}
+							className="bg-card"
+						/>
 					</div>
-					<div className="flex items-center justify-between rounded-md border border-border/50 px-3 py-2">
+
+					<CustomKeyField
+						value={urlKey}
+						onChange={onUrlKeyChange}
+						error={urlKeyError}
+						disabled={isPending}
+					/>
+
+					<div className="flex items-center justify-between gap-3 border border-border px-3 py-2.5">
 						<div>
-							<p className="text-sm font-medium">Link active</p>
-							<p className="text-xs text-muted-foreground">
+							<p id={activeLabelId} className="text-xs font-medium">
+								Link active
+							</p>
+							<p className="text-[11px] text-muted-foreground">
 								Disable to stop redirects for this link.
 							</p>
 						</div>
-						<Switch checked={isActive} onCheckedChange={onIsActiveChange} disabled={isPending} />
+						<Switch
+							checked={isActive}
+							onCheckedChange={onIsActiveChange}
+							disabled={isPending}
+							aria-labelledby={activeLabelId}
+						/>
 					</div>
-					<div className="space-y-2 rounded-md border border-border/50 px-3 py-2">
+
+					<div className="space-y-2 border border-border px-3 py-2.5">
 						<div>
-							<p className="text-sm font-medium">Scheduled expiry</p>
-							<p className="text-xs text-muted-foreground">
+							<p className="text-xs font-medium">Scheduled expiry</p>
+							<p className="text-[11px] text-muted-foreground">
 								Optional. Link will be disabled at 23:59:59 UTC on this date.
 							</p>
 						</div>
 						<Popover>
 							<div className="relative">
-								<PopoverTrigger asChild>
-									<Button
-										variant="outline"
-										disabled={isPending}
-										className={cn(
-											"ghost-border h-10 w-full justify-start bg-card pr-9 text-left text-xs font-normal",
-											!selectedExpiryDate && "text-muted-foreground",
-										)}
-									>
-										<CalendarIcon className="size-4" />
-										{selectedExpiryDate ? (
-											format(selectedExpiryDate, "PPP")
-										) : (
-											<span>Select expiry date</span>
-										)}
-									</Button>
+								<PopoverTrigger
+									render={
+										<Button
+											variant="outline"
+											disabled={isPending}
+											className={cn(
+												"w-full justify-start bg-card pr-9 text-left font-normal",
+												!selectedExpiryDate && "text-muted-foreground",
+											)}
+										/>
+									}
+								>
+									<CalendarIcon className="size-4" aria-hidden="true" />
+									{selectedExpiryDate ? (
+										format(selectedExpiryDate, "PPP")
+									) : (
+										<span>Select expiry date</span>
+									)}
 								</PopoverTrigger>
 								{selectedExpiryDate ? (
 									<button
@@ -146,7 +160,7 @@ export function EditUrlDialog({
 										disabled={isPending}
 										aria-label="Clear expiry date"
 									>
-										<X className="size-4" />
+										<X className="size-4" aria-hidden="true" />
 									</button>
 								) : null}
 							</div>
@@ -159,16 +173,15 @@ export function EditUrlDialog({
 									selected={selectedExpiryDate}
 									onSelect={(date) => onExpiresOnChange(toDateInputValue(date))}
 									disabled={disabledDays}
-									className="rounded-md border"
 								/>
-								<div className="w-full border-t border-border/50 p-2">
-									<div className="grid grid-cols-2 gap-2">
-										{presets.map((preset) => (
+								<div className="w-full border-t border-border p-2">
+									<div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+										{PRESETS.map((preset) => (
 											<Button
 												key={preset.label}
 												variant="outline"
 												size="sm"
-												className="h-8 w-full"
+												className="w-full"
 												onClick={() =>
 													onExpiresOnChange(toDateInputValue(getPresetDate(preset.offsetDays)))
 												}
@@ -182,9 +195,10 @@ export function EditUrlDialog({
 							</PopoverContent>
 						</Popover>
 					</div>
+
 					<Button onClick={onSave} disabled={isPending} className="w-full cursor-pointer">
 						{isPending ? "Saving..." : "Save changes"}
-						{isPending ? <Loader2 className="size-4 animate-spin" /> : null}
+						{isPending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
 					</Button>
 				</div>
 			</DialogContent>

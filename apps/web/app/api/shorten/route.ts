@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { createShortUrl, UrlKeyAlreadyExistsError } from "@/lib/services/url.service";
+import { getCustomKeyValidationError, normalizeCustomKey } from "@/lib/services/keygen";
+import { UrlKeyAlreadyExistsError, createShortUrl } from "@/lib/services/url.service";
 import { isUrlReachable } from "@/lib/services/validator";
-import { normalizeCustomKey, getCustomKeyValidationError } from "@/lib/services/keygen";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
 	const proto = request.headers.get("x-forwarded-proto") ?? "http";
@@ -14,6 +14,14 @@ export async function POST(request: Request) {
 
 	const body = await request.json();
 	const { url, key: rawKey } = body;
+
+	if (typeof url !== "string") {
+		return NextResponse.json({ error: "Invalid url" }, { status: 400 });
+	}
+
+	if (rawKey !== undefined && rawKey !== null && typeof rawKey !== "string") {
+		return NextResponse.json({ error: "Invalid key" }, { status: 400 });
+	}
 
 	let customKey: string | undefined;
 	if (rawKey) {

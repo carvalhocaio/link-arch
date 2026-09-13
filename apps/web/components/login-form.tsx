@@ -1,12 +1,12 @@
 "use client";
 
+import { AuthLegalFooter } from "@/components/auth-legal-footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { Link2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { AuthLegalFooter } from "@/components/auth-legal-footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
 	const [isPending, setIsPending] = useState(false);
@@ -34,19 +34,22 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
 	return (
 		<div className={cn("flex flex-col gap-4", className)} {...props}>
-			<Card className="surface-floating ghost-border gap-0 bg-card/95 py-0 shadow-(--air-shadow)">
-				<CardHeader className="space-y-2 border-b border-border/40 py-6">
-					<div className="flex items-center gap-2 text-primary">
-						<Link2 className="size-4" aria-hidden="true" />
-						<span className="text-sm font-semibold">LinkArch</span>
+			<Card className="gap-0 border border-border bg-card py-0">
+				<CardHeader className="space-y-2 border-b border-border py-5">
+					<div className="flex items-center gap-2">
+						<span className="flex size-6 items-center justify-center bg-primary text-primary-foreground">
+							<Link2 className="size-3.5" aria-hidden="true" />
+						</span>
+						<span className="text-xs font-semibold tracking-tight">LinkArch</span>
 					</div>
-					<CardTitle className="text-2xl tracking-tight">Welcome</CardTitle>
+					<h1 className="text-xl font-medium tracking-tight">Welcome</h1>
 					<CardDescription>Sign in to manage your short links.</CardDescription>
 				</CardHeader>
-				<CardContent className="py-6">
+				<CardContent className="py-5">
 					<Button
 						variant="outline"
-						className="ghost-border h-10 w-full bg-card"
+						size="lg"
+						className="w-full"
 						onClick={handleGoogleSignIn}
 						disabled={isPending}
 					>

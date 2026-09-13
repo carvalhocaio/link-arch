@@ -1,16 +1,13 @@
+import { join } from "node:path";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
-import { join } from "node:path";
 import postgres from "postgres";
 import { db } from "../../lib/db";
 import * as schema from "../../lib/db/schema";
 import { session, user } from "../../lib/db/schema";
 
-const MIGRATIONS_PATH = join(
-	import.meta.dir,
-	"../../../../packages/db/drizzle",
-);
+const MIGRATIONS_PATH = join(import.meta.dir, "../../../../packages/db/drizzle");
 
 export const TEST_USER_ID = "test-user-integration-001";
 export const TEST_USER_ID_2 = "test-user-integration-002";
@@ -59,9 +56,7 @@ export async function createTestSession(userId = TEST_USER_ID) {
 }
 
 export async function teardownTestDb() {
-	await db.execute(
-		sql`TRUNCATE TABLE urls, verification, account, session, "user" CASCADE`,
-	);
+	await db.execute(sql`TRUNCATE TABLE urls, verification, account, session, "user" CASCADE`);
 }
 
 export async function cleanupUrls() {

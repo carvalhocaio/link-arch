@@ -1,8 +1,15 @@
 import { ArrowRight, BarChart2, Clock, Link2, Zap } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { APP_VERSION } from "@/lib/version";
+
+export const metadata: Metadata = {
+	title: "Short links that work as hard as you do",
+	description:
+		"LinkArch turns long URLs into clean, trackable short links — custom aliases, click analytics, and expiry controls built in.",
+};
 
 const features = [
 	{
@@ -24,59 +31,79 @@ const features = [
 
 export default function LandingPage() {
 	return (
-		<div className="surface-stage relative flex min-h-svh flex-col overflow-hidden">
-			<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_22%,rgb(82_163_43_/_14%),transparent_34%),radial-gradient(circle_at_92%_2%,rgb(95_94_97_/_8%),transparent_30%)]" />
-
-			<header className="relative flex items-center justify-between px-6 py-5 md:px-10">
-				<div className="flex items-center gap-2 text-primary">
-					<Link2 className="size-4" aria-hidden="true" />
-					<span className="text-sm font-semibold">LinkArch</span>
+		<div className="flex min-h-svh flex-col bg-background">
+			<header className="flex items-center justify-between border-b border-border px-4 py-4 sm:px-6 md:px-10">
+				<div className="flex items-center gap-2">
+					<span className="flex size-6 items-center justify-center bg-primary text-primary-foreground">
+						<Link2 className="size-3.5" aria-hidden="true" />
+					</span>
+					<span className="text-xs font-semibold tracking-tight">LinkArch</span>
 				</div>
-				<Button variant="outline" asChild>
-					<Link href="/login">Sign in</Link>
+				<Button variant="outline" nativeButton={false} render={<Link href="/login" />}>
+					Sign in
 				</Button>
 			</header>
 
-			<main className="relative flex flex-1 flex-col items-center justify-center px-6 py-16 text-center md:px-10">
-				<h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+			<main
+				id="main-content"
+				className="mx-auto flex w-full max-w-4xl flex-1 flex-col justify-center px-4 py-16 sm:px-6 md:px-10 md:py-24"
+			>
+				<p className="text-[10px] font-semibold tracking-[0.2em] text-muted-foreground uppercase">
+					URL infrastructure
+				</p>
+				{/* Mono runs far wider than a proportional face, so the display scale
+				    stays a step below what a sans heading would take. */}
+				<h1 className="mt-4 text-xl leading-tight font-bold tracking-tight sm:text-2xl md:text-4xl">
 					Short links that work
-					<br />
-					as hard as you do
+					<br className="hidden sm:inline" /> as hard as you do
 				</h1>
-				<p className="mt-4 max-w-md text-base text-muted-foreground">
+				<p className="mt-5 max-w-xl text-xs leading-relaxed text-muted-foreground sm:text-sm">
 					LinkArch turns long, unwieldy URLs into clean, trackable short links — with custom
 					aliases, click analytics, and expiry controls built in.
 				</p>
-				<Button asChild size="lg" className="mt-8">
-					<Link href="/login">
+				<div className="mt-8">
+					<Button size="lg" nativeButton={false} render={<Link href="/login" />}>
 						Get started
-						<ArrowRight className="size-4" />
-					</Link>
-				</Button>
+						<ArrowRight className="size-4" aria-hidden="true" />
+					</Button>
+				</div>
 
-				<section aria-label="Features" className="mt-20 grid w-full max-w-3xl gap-8 sm:grid-cols-3">
-					{features.map((feature) => (
-						<div key={feature.title} className="flex flex-col items-center gap-3 text-center">
-							<div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-								<feature.icon className="size-5" aria-hidden="true" />
-							</div>
-							<h2 className="text-sm font-semibold">{feature.title}</h2>
-							<p className="text-xs leading-relaxed text-muted-foreground">{feature.description}</p>
-						</div>
-					))}
+				<section aria-labelledby="features-heading" className="mt-20 border-t border-border">
+					<h2 id="features-heading" className="sr-only">
+						Features
+					</h2>
+					<ul className="grid sm:grid-cols-3">
+						{features.map((feature) => (
+							<li
+								key={feature.title}
+								className="border-b border-border p-5 sm:border-r sm:border-b-0 sm:last:border-r-0"
+							>
+								<feature.icon className="size-4 text-primary-ink" aria-hidden="true" />
+								<h3 className="mt-3 text-xs font-semibold">{feature.title}</h3>
+								<p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+									{feature.description}
+								</p>
+							</li>
+						))}
+					</ul>
 				</section>
 			</main>
 
-			<footer className="relative py-6 text-center text-xs text-muted-foreground">
-				<span>v{APP_VERSION}</span>
-				<span className="mx-2">·</span>
-				<Link href="/privacy" className="underline-offset-4 hover:text-primary hover:underline">
-					Privacy
-				</Link>
-				<span className="mx-2">·</span>
-				<Link href="/terms" className="underline-offset-4 hover:text-primary hover:underline">
-					Terms
-				</Link>
+			<footer className="border-t border-border px-4 py-5 text-[11px] text-muted-foreground sm:px-6 md:px-10">
+				<div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-x-3 gap-y-1">
+					<span>v{APP_VERSION}</span>
+					<span aria-hidden="true">·</span>
+					<Link
+						href="/privacy"
+						className="underline-offset-4 hover:text-primary-ink hover:underline"
+					>
+						Privacy
+					</Link>
+					<span aria-hidden="true">·</span>
+					<Link href="/terms" className="underline-offset-4 hover:text-primary-ink hover:underline">
+						Terms
+					</Link>
+				</div>
 			</footer>
 		</div>
 	);

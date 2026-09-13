@@ -24,10 +24,11 @@ interface DeleteUrlActionProps {
 export function DeleteUrlAction({ onConfirm, isPending, ariaLabel }: DeleteUrlActionProps) {
 	return (
 		<AlertDialog>
-			<AlertDialogTrigger asChild>
-				<Button variant="ghost" size="icon-sm" aria-label={ariaLabel} className="cursor-pointer">
-					<Trash2 className="size-4" />
-				</Button>
+			<AlertDialogTrigger
+				render={<Button variant="ghost" size="icon-sm" className="cursor-pointer" />}
+				aria-label={ariaLabel}
+			>
+				<Trash2 className="size-4" aria-hidden="true" />
 			</AlertDialogTrigger>
 			<AlertDialogContent>
 				<AlertDialogHeader>

@@ -7,6 +7,5 @@ export function useMyUrls() {
 		queryKey: ["my-urls"],
 		queryFn: getMyUrls,
 		retry: false,
-		staleTime: 60 * 1000,
 	});
 }

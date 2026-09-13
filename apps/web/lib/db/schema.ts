@@ -1,5 +1,14 @@
 import { sql } from "drizzle-orm";
-import { boolean, index, integer, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+	boolean,
+	index,
+	integer,
+	pgTable,
+	serial,
+	text,
+	timestamp,
+	uniqueIndex,
+} from "drizzle-orm/pg-core";
 
 import { user } from "./auth-schema";
 
@@ -24,6 +33,8 @@ export const urls = pgTable(
 	(table) => ({
 		userIdIdx: index("urls_user_id_idx").on(table.userId),
 		userCreatedAtIdx: index("urls_user_id_created_at_idx").on(table.userId, table.createdAt),
-		keyActiveUniqueIdx: uniqueIndex("urls_key_active_unique").on(table.key).where(sql`${table.isDeleted} = false`),
+		keyActiveUniqueIdx: uniqueIndex("urls_key_active_unique")
+			.on(table.key)
+			.where(sql`${table.isDeleted} = false`),
 	}),
 );

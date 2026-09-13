@@ -32,6 +32,9 @@ jobs:
       NEXT_PUBLIC_APP_URL: http://localhost:3001
       BETTER_AUTH_SECRET: ci-test-secret-not-used-in-prod
       BASE_URL: http://localhost:3001
+      # The suite shortens http://localhost:3001/api/health on purpose, which the
+      # SSRF guard in isUrlReachable() would otherwise refuse.
+      ALLOW_PRIVATE_TARGET_URLS: "true"
 
     steps:
       - uses: actions/checkout@v4

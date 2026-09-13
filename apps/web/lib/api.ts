@@ -1,5 +1,3 @@
-"use client";
-
 import { authClient } from "@/lib/auth-client";
 
 export interface ShortenResponse {
@@ -13,13 +11,6 @@ export interface ShortenErrorResponse {
 	error: string;
 }
 
-export interface PeekResponse {
-	key: string;
-	targetUrl: string;
-	clicks: number;
-	createdAt: string;
-}
-
 export interface AdminUrl {
 	id: number;
 	key: string;
@@ -30,20 +21,12 @@ export interface AdminUrl {
 	createdAt: string;
 }
 
-export interface UpdateMyUrlPayload {
+export interface PatchMyUrlPayload {
 	id: number;
-	url: string;
-	expiresAt: string | null;
-}
-
-export interface UpdateMyUrlStatusPayload {
-	id: number;
-	isActive: boolean;
-}
-
-export interface UpdateMyUrlKeyPayload {
-	id: number;
-	key: string;
+	url?: string;
+	expiresAt?: string | null;
+	key?: string;
+	isActive?: boolean;
 }
 
 export interface DeleteMyUrlPayload {
@@ -70,17 +53,6 @@ export async function shortenUrl(payload: ShortenPayload): Promise<ShortenRespon
 	return response.json();
 }
 
-export async function peekUrl(key: string): Promise<PeekResponse> {
-	const response = await fetch(`/${key}/peek`);
-
-	if (!response.ok) {
-		const error: ShortenErrorResponse = await response.json();
-		throw new Error(error.error ?? "Failed to peek URL");
-	}
-
-	return response.json();
-}
-
 export async function getMyUrls(): Promise<AdminUrl[]> {
 	const response = await fetch("/api/admin/urls");
 
@@ -91,46 +63,16 @@ export async function getMyUrls(): Promise<AdminUrl[]> {
 	return response.json();
 }
 
-export async function updateMyUrl(payload: UpdateMyUrlPayload): Promise<AdminUrl> {
-	const response = await fetch(`/api/admin/urls/${payload.id}`, {
+export async function patchMyUrl({ id, ...patch }: PatchMyUrlPayload): Promise<AdminUrl> {
+	const response = await fetch(`/api/admin/urls/${id}`, {
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ url: payload.url, expiresAt: payload.expiresAt }),
+		body: JSON.stringify(patch),
 	});
 
 	if (!response.ok) {
 		const error: ShortenErrorResponse = await response.json();
 		throw new Error(error.error ?? "Failed to update URL");
-	}
-
-	return response.json();
-}
-
-export async function updateMyUrlStatus(payload: UpdateMyUrlStatusPayload): Promise<AdminUrl> {
-	const response = await fetch(`/api/admin/urls/${payload.id}/status`, {
-		method: "PATCH",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ isActive: payload.isActive }),
-	});
-
-	if (!response.ok) {
-		const error: ShortenErrorResponse = await response.json();
-		throw new Error(error.error ?? "Failed to update URL status");
-	}
-
-	return response.json();
-}
-
-export async function updateMyUrlKey(payload: UpdateMyUrlKeyPayload): Promise<AdminUrl> {
-	const response = await fetch(`/api/admin/urls/${payload.id}/key`, {
-		method: "PATCH",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ key: payload.key }),
-	});
-
-	if (!response.ok) {
-		const error: ShortenErrorResponse = await response.json();
-		throw new Error(error.error ?? "Failed to update URL key");
 	}
 
 	return response.json();
